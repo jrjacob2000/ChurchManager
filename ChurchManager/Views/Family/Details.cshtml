@@ -1,0 +1,259 @@
+﻿@model ChurchManager.Models.FamilyView
+
+@{
+    ViewBag.Title = "Family";
+}
+
+<style>
+    hr {
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .select2 {
+        max-width: 268px !important;
+        min-width: 200px !important;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right"> @Html.ActionLink("View All Family", "Index", null, new { @title = "Person list" })</div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- Profile Image -->
+        <div class="box box-primary">
+            <div class="box-body box-profile">
+                <img class="profile-user-img img-responsive img-circle" src="~/Images/blankProfile.jpg" alt="User profile picture">
+                <h3 class="profile-username text-center">Family: @Html.DisplayFor(model => model.Name)</h3>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary btn-block", @title = "Edit" })
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+        <!-- About Me Box -->
+        <div class="box box-primary">
+            @*<div class="box-header with-border">
+                    <h3 class="box-title">About Me</h3>
+                </div>*@
+            <!-- /.box-header -->
+            <div class="box-body">
+                <strong><i class="fa fa-map-marker margin-r-5"></i> Address</strong>
+                <p class="text-muted">@Html.DisplayFor(model => model.Address1)</p>
+                <hr>
+                <strong><i class="fa fa-calendar margin-r-5"></i> Wedding date</strong>
+                <p class="text-muted">@Html.DisplayFor(model => model.WeddingDate)</p>
+                <hr>
+                <strong><i class="fa fa-phone margin-r-5"></i> Home phone</strong>
+                <p class="text-muted">@Html.DisplayFor(model => model.HomePhone)</p>
+                <hr>
+                <strong><i class="fa fa-envelope margin-r-5"></i> Email</strong>
+                <p class="text-muted">@Html.DisplayFor(model => model.Email)</p>
+                <hr>
+
+                <strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-md-9">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#family" data-toggle="tab">Family Members</a></li>
+                <li> <a href="#timeline" data-toggle="tab">Timeline</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="active tab-pane" id="family">
+                    @using (Html.BeginForm("AddToFamily", "Family", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => Model.ID)
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div>
+                            <div style="margin-bottom:5px" class="pull-right">
+                                @Html.DropDownListFor(x => x.SectedPersonIdToAdd, Model.PersonList, "Search person to add", new { @class = "form-control select2 pull-right" })
+                                <button id="add" class="btn btn-success" type="button">Add</button>
+                            </div>
+
+                        </div>
+                    }
+                    <div id="container">
+                        @Html.Partial("_FamilyMembersPartial", Model)
+                    </div>
+
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="timeline">
+                    <div>timeline is underconstruction</div>
+                    <!-- The timeline -->
+                    <ul class="timeline timeline-inverse">
+                        <!-- timeline time label -->
+                        <li class="time-label">
+                            <span class="bg-red">
+                                10 Feb. 2014
+                            </span>
+                        </li>
+                        <!-- /.timeline-label -->
+                        <!-- timeline item -->
+                        <li>
+                            <i class="fa fa-envelope bg-blue"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
+                                <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+                                <div class="timeline-body">
+                                    Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
+                                    weebly ning heekya handango imeem plugg dopplr jibjab, movity
+                                    jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
+                                    quora plaxo ideeli hulu weebly balihoo...
+                                </div>
+                                <div class="timeline-footer">
+                                    <a class="btn btn-primary btn-xs">Read more</a>
+                                    <a class="btn btn-danger btn-xs">Delete</a>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- END timeline item -->
+                        <!-- timeline item -->
+                        <li>
+                            <i class="fa fa-user bg-aqua"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span>
+                                <h3 class="timeline-header no-border">
+                                    <a href="#">Sarah Young</a> accepted your friend request
+                                </h3>
+                            </div>
+                        </li>
+                        <!-- END timeline item -->
+                        <!-- timeline item -->
+                        <li>
+                            <i class="fa fa-comments bg-yellow"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fa fa-clock-o"></i> 27 mins ago</span>
+                                <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
+                                <div class="timeline-body">
+                                    Take me to your leader!
+                                    Switzerland is small and neutral!
+                                    We are more like Germany, ambitious and misunderstood!
+                                </div>
+                                <div class="timeline-footer">
+                                    <a class="btn btn-warning btn-flat btn-xs">View comment</a>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- END timeline item -->
+                        <!-- timeline time label -->
+                        <li class="time-label">
+                            <span class="bg-green">
+                                3 Jan. 2014
+                            </span>
+                        </li>
+                        <!-- /.timeline-label -->
+                        <!-- timeline item -->
+                        <li>
+                            <i class="fa fa-camera bg-purple"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fa fa-clock-o"></i> 2 days ago</span>
+                                <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
+                                <div class="timeline-body">
+                                    <img src="http://placehold.it/150x100" alt="..." class="margin">
+                                    <img src="http://placehold.it/150x100" alt="..." class="margin">
+                                    <img src="http://placehold.it/150x100" alt="..." class="margin">
+                                    <img src="http://placehold.it/150x100" alt="..." class="margin">
+                                </div>
+                            </div>
+                        </li>
+                        <!-- END timeline item -->
+                        <li>
+                            <i class="fa fa-clock-o bg-gray"></i>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-pane -->
+        </div>
+        <!-- /.tab-content -->
+    </div>
+    <!-- /.nav-tabs-custom -->
+</div>
+<!-- /.col -->
+
+@section Scripts {
+    <!-- Select2 -->
+    <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+            //$('#tblFamily').DataTable();
+            $('.select2').select2({
+            });
+
+            $('#btnConfirmdelete').on('click', function () {
+                alert('');
+            })
+
+            $('#add').on('click', function () {               
+                if ($('#SectedPersonIdToAdd').val() != '') {
+                    $('.loader').show();
+                    $.post('@Url.Action("AddToFamily")', $('form').serializeModel(), function (html) {
+                        $('.loader').hide();
+                        $('#SectedPersonIdToAdd').val('').trigger('change')
+                        $('#container').empty();
+                        $('#container').html(html);
+                    }).fail(function (response) {
+                        alert('Error: ' + response.responseText);
+                    });
+                }
+                else {
+                    alert("Please select person to search")
+                }
+
+            });
+        });
+
+        function RemoveFromFamily(perId, famId) {
+            
+            //alert('/People/RemoveFromGroup/' + grpId + '?parentId=' + perId);
+            jQuery.noConflict();
+            // Delete any existing modal before spawning another.
+            $('#Ajax-Modal').remove();
+
+            $.ajax({
+                url: '/Family/RemoveFromFamily/' + perId + '?parentId=' + famId,
+                type: 'get',
+                cache: false,
+                //data: JSON.stringify({ personId: perId, groupId: grpId }),//{ postId: $(e.target).data('id') },
+                success: function (data) {
+
+                    //$(data).modal('show')
+                    $(data).modal(
+                        {
+                            backdrop: 'static',
+                            keyboard: false,
+                        }
+                    );
+                },
+                error: function (data) {
+                    alert(data.responseText);
+                }
+            });
+
+
+
+        }
+
+        $.fn.serializeModel = function () {
+            var model = {};
+            $(this).serializeArray().map(function (item) {
+                model[item.name] = item.value;
+            });
+            return model;
+        };
+    </script>
+}
+

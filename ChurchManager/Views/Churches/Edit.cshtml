@@ -1,0 +1,34 @@
+﻿@model ChurchManager.Models.Church
+
+@{
+    /**/
+
+    ViewBag.Title = "Edit";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.OwnerGroupId)
+    @Html.Partial("_ChurchPartial")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Select2 -->
+    <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2();
+
+
+        });
+    </script>
+}
+

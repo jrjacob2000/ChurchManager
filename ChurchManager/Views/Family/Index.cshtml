@@ -1,0 +1,111 @@
+﻿@model ChurchManager.Models.FamilyListView
+
+@{
+    ViewBag.Title = "Family List";
+}
+
+<div class="box">
+    <div class="box-header">
+        @if (Model.CanAdd)
+        {
+            
+            <button onclick="location.href='@Url.Action("Create", "Family")';return false;" class="btn btn-success"><i class="fa fa-plus"></i> Create New</button>
+        }
+    </div>
+    <div class="box-body">
+        <table id="tblFamily" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Address
+                    </th>
+
+                    <th>
+                        HomePhone
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+                    <th>Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @Html.Hidden("item-to-delete", "", new { @id = "item-to-delete" })
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink(item.Name, "Details", new { id = item.ID }, new { @title = "View family detail" })
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AddressDisplay)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.HomePhone)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+
+                        <td style="min-width:78px">
+                            @if (Model.CanEdit)
+                            {
+                                @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "btn btn-primary fa fa-pencil", @title = "Edit" })                            
+                            }
+                            @if (Model.CanDelete)
+                            {
+                                <a href="#" class="btn btn-danger fa fa-trash" onclick="ConfirmDelete('@item.ID')"></a>  
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+    <!-- /.box-body -->
+
+</div>
+
+@section Scripts {
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#tblFamily').DataTable();
+            
+        })
+
+        function ConfirmDelete(id) {
+            jQuery.noConflict();
+            // Delete any existing modal before spawning another.
+            $('#Ajax-Modal').remove(); 
+
+            $.ajax({
+                url: 'Family/Delete/' + id,
+                type: 'get',
+                cache: false,
+                data: { postId: id },//{ postId: $(e.target).data('id') },
+                success: function (data) {
+                    $(data).modal(
+                        {
+                        backdrop: 'static',
+                        keyboard: false,
+                    });
+                },
+                error: function (data) {
+                    alert(data.responseText);
+                }
+            });
+        }
+    </script>
+}
+

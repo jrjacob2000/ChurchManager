@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChurchManager", "ChurchManager\ChurchManager.csproj", "{9DA1B658-F928-4747-85E0-A3A6ED11D9ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChurchManager.Tests", "ChurchManager.Tests\ChurchManager.Tests.csproj", "{394A914E-09B8-46F5-89DB-577AF78B8744}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9DA1B658-F928-4747-85E0-A3A6ED11D9ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DA1B658-F928-4747-85E0-A3A6ED11D9ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DA1B658-F928-4747-85E0-A3A6ED11D9ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DA1B658-F928-4747-85E0-A3A6ED11D9ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{394A914E-09B8-46F5-89DB-577AF78B8744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{394A914E-09B8-46F5-89DB-577AF78B8744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{394A914E-09B8-46F5-89DB-577AF78B8744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{394A914E-09B8-46F5-89DB-577AF78B8744}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {933E18F1-F0C5-4218-8C3C-4E04E0FDAE6F}
+	EndGlobalSection
+EndGlobal

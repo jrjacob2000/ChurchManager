@@ -1,0 +1,115 @@
+﻿@model ChurchManager.Models.UserListView
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "User List";
+}
+
+
+<div class="box">
+    <div class="box-header">
+        @if(Model.CanAdd)
+        {
+            <button onclick="location.href='@Url.Action("CreateUser", "Permission")';return false;" class="btn btn-success"><i class="fa fa-plus"></i> New User</button>
+        }
+        </div>
+        <div class="box-body">
+            <table id="tblFamily" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <label>Email</label>
+                        </th>
+                        <th>
+                            <label>Roles</label>
+                        </th>
+
+                        <th>
+                            <label>Account Owner</label>
+                        </th>
+
+                        @*<th>
+                            <label>AccessFailedCount</label>
+                            
+                        </th>*@
+                        <th>Action</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.Raw(string.Join(" | ", item.RolesList.Select(s => string.Format("<span>{0}</span>", s.Text))))
+                        </td>
+                        <td>
+                            @if (item.IsAccountOwner)
+                            {
+                                <i class="fa fa-toggle-on" style="font-size:24px; color:green"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-toggle-off" style="font-size:24px;"></i>
+                            }
+                        </td>
+
+                        @*<td>
+                            @Html.DisplayFor(modelItem => item.AccessFailedCount)
+
+                        </td>*@
+
+                        <td style="min-width:78px">
+                            @if (Model.CanEdit)
+                            {
+                                @Html.ActionLink(" ", "EditUser", "Permission", new { id = item.ID }, new { @class = "btn btn-primary fa fa-pencil", @title = "Edit" })
+                            }
+                            @if (Model.CanDelete)
+                            {
+                                <a href="#" class="btn btn-danger fa fa-trash" onclick="ConfirmDelete('@item.ID')"></a>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+@section Scripts {
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#tblFamily').DataTable();
+        })
+
+         function ConfirmDelete(id) {
+            jQuery.noConflict();
+            // Delete any existing modal before spawning another.
+            $('#Ajax-Modal').remove(); 
+
+            $.ajax({
+                url: '/Permission/DeleteUser/' + id,
+                type: 'get',
+                cache: false,
+                data: { postId: id },//{ postId: $(e.target).data('id') },
+                success: function (data) {
+                    $(data).modal(
+                        {
+                        backdrop: 'static',
+                        keyboard: false,
+                    });
+                },
+                error: function (data) {
+                    alert(data.responseText);
+                }
+            });
+        }
+    </script>
+}

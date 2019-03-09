@@ -1,0 +1,54 @@
+﻿@model ChurchManager.Models.FamilyView
+
+
+<table id="tblFamily" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                Family Role
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.HomePhone)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>Action</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.FamilyMembers)
+        {
+            <tr>
+                <td>
+
+                    @Html.ActionLink(item.Name, "Details", "People", new { id = item.Id }, new { @title = "View person detail" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FamilyRoleDisplay)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.HomePhone)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+
+                <td>
+                    @Html.ActionLink(" ", "Edit", "People", new { id = item.Id }, new { @class = "btn btn-primary fa fa-pencil", @title = "Edit" })
+                    <a href="#" onclick="RemoveFromFamily('@item.Id','@Model.ID')" class="btn btn-danger fa fa-trash delete-country" title="Remove"></a>
+                    @*@Html.ActionLink("  ", "RemoveFromFamily", "People", new { id = item.Id }, new { @class = "btn btn-danger fa fa-trash", @title = "Remove this person from the family" })*@
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>

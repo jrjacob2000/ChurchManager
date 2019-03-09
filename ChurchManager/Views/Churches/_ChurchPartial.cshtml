@@ -1,0 +1,171 @@
+﻿@model ChurchManager.Models.Church
+
+
+<div class="box box-default">
+    <div class="box-header with-border">
+        <h3 class="box-title">Church Info</h3>
+        <div class="pull-right">
+            <input type="submit" value="Save" class="btn btn-success" />
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-6">
+                @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
+                <div class="form-group">
+                    <label>Church Name</label>
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+                <!-- /.form-group -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-6">
+
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-md-12">
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Address</label>
+                    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                </div>
+                <!-- /.form-group -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>City</label>
+                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                </div>
+                <!-- /.form-group -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>State</label>
+                    @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                </div>
+                <!-- /.form-group -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Zip Code</label>
+                    @Html.EditorFor(model => model.ZipCode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Country</label>
+                    @Html.DropDownListFor(x => x.Country, new List<SelectListItem>
+                    {
+                        new SelectListItem() {Text = "Philippines", Value="PH"},
+                        new SelectListItem() {Text = "United State of America", Value="US"},
+                        new SelectListItem() {Text = "Japan", Value="JP"}
+                    },"", new { @class = "form-control select2" })
+
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">Contact Info</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-phone"></i>
+                            </div>
+                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-envelope"></i>
+                            </div>
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            @*<div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Mobile Phone</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-mobile-phone"></i>
+                                </div>
+                                @Html.EditorFor(model => model.CellPhone, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.CellPhone, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-envelope"></i>
+                                </div>
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+        </div>
+    </div>
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">Other Info</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Facebook page</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            @Html.EditorFor(model => model.FbPage, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.FbPage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6"></div>
+            </div>
+        </div>
+    </div>

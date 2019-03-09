@@ -1,0 +1,32 @@
+﻿@model ChurchManager.Models.Messages
+
+<style>
+    .validation-summary-errors ul {
+        list-style-type: none;
+        padding-left: 0px;
+    }
+</style>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage) || !ViewContext.ViewData.ModelState.IsValid)
+{
+    <div class="callout callout-danger">
+        <p>
+            @(Model.ErrorMessage ?? "")
+            @Html.ValidationSummary(true, "", new { @style = "color:white" })
+        </p>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+{
+    <div class="callout callout-success">
+        <p>@(Model.SuccessMessage ?? "")</p>
+    </div>
+}
+
+@*@if (!ViewContext.ViewData.ModelState.IsValid)
+{
+    <div class="callout callout-danger">
+        @Html.ValidationSummary(true, "", new { @style = "color:white" })
+    </div>
+}*@

@@ -1,0 +1,32 @@
+﻿@model ChurchManager.Models.PersonView
+
+<table id="tblFamily" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                Group Name
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            foreach (var item in Model.Groups)
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink(item.Name, "Details", "Groups", new { id = item.Id }, new { @title = "View group detail" })
+                    </td>
+                    <td style="width:20%">
+                        <a href="#" onclick="RemoveFromGroup('@Model.Id','@item.Id')" class="btn btn-danger fa fa-trash delete-country" title="Remove"></a>
+                        @*<a href="#" onclick="ConfirmRemove(this)" class="btn btn-danger fa fa-trash delete-country" title="Remove"></a>*@
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+
+</table>
+

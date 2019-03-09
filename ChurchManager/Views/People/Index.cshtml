@@ -1,0 +1,109 @@
+﻿@model ChurchManager.Models.PersonListView
+
+@{
+    ViewBag.Title = "Person List";
+}
+
+<div class="box">
+    <div class="box-header">
+        @if (Model.CanAdd)
+        {
+            <button onclick="location.href='@Url.Action("Create", "People")';return false;" class="btn btn-success"><i class="fa fa-plus"></i> Create New</button>
+        }
+    </div>
+    <div class="box-body">
+        <table id="tblPerson" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Family Name
+                    </th>
+                    <th>
+                        CellPhone
+                    </th>
+
+                    <th>
+                        BirthDay
+                    </th>
+                    <th>Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink(item.Name, "Details", new { id = item.Id }, new { @title = "View family detail" })
+                        </td>
+                        <td>
+                            @if (item.Family != null)
+                            {
+                                @Html.ActionLink(item.Family.Name, "Details", "Family", new { id = item.Family.ID }, new { @title = "View family detail" })
+                            }
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CellPhone)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BirthDay)
+                        </td>
+
+                        <td>
+                            @if (Model.CanEdit)
+                            {
+                                @Html.ActionLink(" ", "Edit", new { id = item.Id }, new { @class = "btn btn-primary fa fa-pencil", @title = "Edit" })
+                            }
+                            @if (Model.CanDelete)
+                            {
+                                <a href="#" class="btn btn-danger fa fa-trash" onclick="ConfirmDelete('@item.Id')"></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+
+@section Scripts {
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#tblPerson').DataTable();
+        })
+
+         function ConfirmDelete(id) {
+            jQuery.noConflict();
+            // Delete any existing modal before spawning another.
+            $('#Ajax-Modal').remove();
+
+            $.ajax({
+                url: '/People/Delete/' + id,
+                type: 'get',
+                cache: false,
+                data: { postId: id },//{ postId: $(e.target).data('id') },
+                success: function (data) {
+                    $(data).modal(
+                        {
+                        backdrop: 'static',
+                        keyboard: false,
+                    });
+                },
+                error: function (data) {
+                    alert(data.responseText);
+                }
+            });
+        }
+    </script>
+}

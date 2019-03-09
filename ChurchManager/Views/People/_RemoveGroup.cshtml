@@ -1,0 +1,55 @@
+﻿@model ChurchManager.Models.ModalDelete
+
+
+<div id="Ajax-Modal" class="modal fade">
+    <div class="row">
+        @using (Html.BeginForm(Model.Action, Model.Controller))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div id="Ajax-Form">
+                        @Html.HiddenFor(m => m.Id)
+                        @Html.HiddenFor(m => m.ParentId)
+
+                        <div class="modal-header">
+                            @*@Html.Partial("_ErrorMessages_Modal")*@
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            @if (string.IsNullOrEmpty(Model.ModalTitle))
+                            {
+                                <h4 class="modal-title">Delete Confirmation</h4>
+                            }
+                            else
+                            {
+                                <h4 class="modal-title">@Model.ModalTitle</h4>
+                            }
+
+                        </div>
+
+                        <div class="modal-body">
+                            @if (string.IsNullOrEmpty(Model.ModalMessage))
+                            {
+                            <div>
+                                Are you sure you want to delete the record<b> @Model.Name</b>?
+                            </div>
+                            }                                                            
+                            else
+                            {
+                            <div>
+                                Are you sure you want to delete the record<b> @Model.Name</b>?
+                            </div>
+                            }
+                        </div>
+                        <div class="modal-footer">      
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                            <button type="submit" id="SaveButton" value="save" class="btn btn-primary ">Confirm Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>

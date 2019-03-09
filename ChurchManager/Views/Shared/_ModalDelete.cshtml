@@ -1,0 +1,96 @@
+﻿@model ChurchManager.Models.ModalDelete
+
+
+
+<div id="Ajax-Modal" class="modal fade">
+    <div class="row">
+        @using (Html.BeginForm(Model.Action, Model.Controller))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div id="Ajax-Form">
+                        @Html.HiddenFor(m => m.Id)
+                        @Html.HiddenFor(m => m.ParentId)
+
+                        <div class="modal-header">
+                            @*@Html.Partial("_ErrorMessages_Modal")*@
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            @if (string.IsNullOrEmpty(Model.ModalTitle))
+                            {
+                                <h4 class="modal-title">Delete Confirmation</h4>
+                            }
+                            else
+                            {
+                                <h4 class="modal-title">@Model.ModalTitle</h4>
+                            }
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="loader pull-right"></div>
+                            @if (string.IsNullOrEmpty(Model.ModalMessage))
+                            {
+                                <div>
+                                    Are you sure you want to delete the record<b> @Model.Name</b>?
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div>
+                                    @Model.ModalMessage
+                                </div>
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                            @if(@Model.IsSubmit)
+                            {
+                                <button type="submit" id="btnConfirmdelete" value="save" class="btn btn-primary ">Confirm Delete</button>
+                            }
+                            else
+                            {
+                                <a href="#" onclick="ConfirmDelete(this)" class="btn btn-primary" title="Remove">Confirm Delete</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <script type="text/javascript">
+                $(".loader").hide();
+
+                $.fn.serializeModel = function () {
+                    var model = {};
+                    $(this).serializeArray().map(function (item) {
+                        model[item.name] = item.value;
+                    });
+                    return model;
+                };
+
+                function ConfirmDelete(element) {
+                    $(".loader").show();
+                    //$(element).closest('tr').hide();
+                    $(element).prev('input').val('true').trigger('change');
+                    //$('#container').empty();
+
+                     $.post('@Url.Action(@Model.Action)', $('form').serializeModel(), function (html) {
+                         $('#Ajax-Modal').modal('hide');
+                         $('#container').empty();
+                         $('#container').html(html);
+                     }).fail(function (response) {
+                         alert('Error: ' + response.responseText);
+                     });
+                }
+
+
+         </script>
+        }
+    </div>
+</div>
+
+        

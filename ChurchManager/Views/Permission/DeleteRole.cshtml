@@ -1,0 +1,63 @@
+﻿@model ChurchManager.Models.ApplicationRoleView
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+<div class="box box-default">
+    <div class="box-header with-border">
+        <h3 class="box-title">Edit Role and Permission</h3>
+        <div class="pull-right">
+            <input type="submit" value="Save" class="btn btn-success" />
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Role</label>
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control"  } })
+
+                </div>
+                <!-- /.form-group -->
+            </div>
+
+        </div>       
+
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-md-6">
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Operations</label>  
+                    @foreach (var item in Model.OperationList)
+                    {
+                        <div class="checkbox">
+                            <label>
+                                @if (item.Selected)
+                                {
+                                    <input type="checkbox" name="SelectedOperation" checked="checked" value="@item.Value" /> @item.Text
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="SelectedOperation" value="@item.Value" /> @item.Text
+                                }
+                            </label>
+                    </div>
+                    }                   
+                </div>
+                <!-- /.form-group -->
+            </div>
+        </div>
+
+
+
+    </div>
+    <!-- /.box-body -->
+</div>
+
+}

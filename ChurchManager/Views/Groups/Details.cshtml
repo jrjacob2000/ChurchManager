@@ -1,0 +1,169 @@
+﻿@model ChurchManager.Models.GroupView
+
+@{
+    /**/
+
+    ViewBag.Title = "Details";
+}
+
+<style>
+    .select2 {
+        width: 268px !important;
+    }
+</style>
+@using (Html.BeginForm("Details", "Groups", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => Model.Id)
+    @Html.HiddenFor(m => Model.Name)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">Group Info</h3>
+            <div class="pull-right">
+                @*<input type="submit" value="Save" class="btn btn-success" />*@
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.ValidationSummary(true, "fdsfds ", new { @class = "text-danger" })
+                    <div class="form-group">
+                        <label>Group Name:</label>
+                        @Html.DisplayFor(model => model.Name)
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label>Group Name:</label>
+                        @Html.DisplayFor(model => model.Description)
+                    </div>
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-6">
+
+                </div>
+                <!-- /.col -->
+            </div>
+
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">Members</h3>
+
+            <div class="pull-right">
+                @Html.DropDownListFor(x => x.SectedPersonIdToAdd, Model.PersonList, "Search person to add", new { @class = "form-control select2" })
+                <button id="add" class="btn btn-success" type="button">Add</button>
+            </div>
+            <div class="loader pull-right"></div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    
+                </div>
+                <div class="col-md-6"></div>
+            </div>
+            <div class="row">
+                
+                <div id="container">
+                    @Html.Partial("_GroupMember", Model)
+                </div>
+            </div>
+
+        </div>
+        <!-- /.box-body -->
+    </div>
+}
+
+@section Scripts {
+    @*@Scripts.Render("~/bundles/jqueryval")*@
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
+
+    <script type="text/javascript">
+
+        $('.loader').hide();
+
+        $(document).ready(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2({
+            });
+
+        });
+
+
+        $(function () {           
+
+            $('#add').on('click', function () {
+               
+                if ($('#SectedPersonIdToAdd').val() != '') {
+                    $('.loader').show();
+                    $.post('@Url.Action("Add")', $('form').serializeModel(), function (html) {
+                        $('.loader').hide();
+                        $('#SectedPersonIdToAdd').val('').trigger('change')
+                        $('#container').empty();
+                        $('#container').html(html);
+                    }).fail(function (response) {
+                        alert('Error: ' + response.responseText);
+                    });
+                }
+                else {
+                    alert("Please select person to search")
+                }
+
+            });
+
+            $("#btnSave").on('click', function () {
+                 $.post('@Url.Action("Details")', $('form').serializeModel(), function (html) {
+                    $('#container').empty();
+                    $('#container').html(html);
+                }).fail(function (response) {
+                    alert('Error: ' + response.responseText);
+                });
+            })
+
+    });
+
+        function Remove(element) {
+            $('.loader').show();
+            //$(element).closest('tr').hide();
+            $(element).prev('input').val('true').trigger('change');
+            //$('#container').empty();
+            
+            $.post('@Url.Action("Remove")', $('form').serializeModel(), function (html) {
+                $('.loader').hide();
+                 $('#container').empty();
+                 $('#container').html(html);
+            }).fail(function (response) {
+                $('.loader').hide();
+                 alert('Error: ' + response.responseText);
+             });
+        }
+
+
+
+    $.fn.serializeModel = function () {
+        var model = {};
+        $(this).serializeArray().map(function (item) {
+            model[item.name] = item.value;
+        });
+        return model;
+    };
+
+    </script>
+}
+
+
+
+
+
+

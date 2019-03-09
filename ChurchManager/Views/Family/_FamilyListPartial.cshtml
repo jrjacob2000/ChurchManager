@@ -1,0 +1,32 @@
+﻿@model ChurchManager.Models.FamilyListView
+
+@foreach (var item in Model.Items)
+{
+    <tr>
+        <td>
+            @Html.ActionLink(item.Name, "Details", new { id = item.ID }, new { @title = "View family detail" })
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AddressDisplay)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.HomePhone)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+
+        <td style="min-width:78px">
+            @if (Model.CanEdit)
+            {
+                @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "btn btn-primary fa fa-pencil", @title = "Edit" })
+            }
+            @if (Model.CanDelete)
+            {
+                <a href="#" class="btn btn-danger fa fa-trash" onclick="ConfirmDelete('@item.ID')"></a>
+            }
+        </td>
+    </tr>
+}
