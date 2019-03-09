@@ -114,7 +114,7 @@ namespace ChurchManager.Controllers
             }
             else
             {
-                person.Family = db.Families.Find(personView.SelectedFamilyId);
+                person.Family = db.Families.Find(new Guid(personView.SelectedFamilyId));
             }
 
             if (ModelState.IsValid)
