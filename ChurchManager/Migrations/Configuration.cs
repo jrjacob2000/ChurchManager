@@ -96,28 +96,28 @@ namespace ChurchManager.Migrations
             var currentOperations = db.Operations.ToList();
 
             #region Family Operation
-            if (!currentOperations.Exists(x => x.Id == "Family_View"))
+            if (!currentOperations.Exists(x => x.Id == ChurchManager.Constants.Operation.Family_View))
                 db.Operations.Add(new Operation()
                 {
                     Id = "Family_View",
                     Description = "Can view family"
                 });
 
-            if (!currentOperations.Exists(x => x.Id == "Family_Edit"))
+            if (!currentOperations.Exists(x => x.Id == ChurchManager.Constants.Operation.Family_Edit))
                 db.Operations.Add(new Operation()
                 {
                     Id = "Family_Edit",
                     Description = "Can edit family"
                 });
 
-            if (!currentOperations.Exists(x => x.Id == "Family_Create"))
+            if (!currentOperations.Exists(x => x.Id == ChurchManager.Constants.Operation.Family_Create))
                 db.Operations.Add(new Operation()
                 {
                     Id = "Family_Create",
                     Description = "Can create family"
                 });
 
-            if (!currentOperations.Exists(x => x.Id == "Family_Delete"))
+            if (!currentOperations.Exists(x => x.Id == ChurchManager.Constants.Operation.Family_Delete))
                 db.Operations.Add(new Operation()
                 {
                     Id = "Family_Delete",
@@ -223,6 +223,38 @@ namespace ChurchManager.Migrations
                 {
                     Id = ChurchManager.Constants.Operation.Person_View,
                     Description = "Can view person"
+                });
+
+            #endregion
+
+
+            #region Group Operation
+            if (!currentOperations.Exists(x => x.Id == ChurchManager.Constants.Operation.Group_View))
+                db.Operations.Add(new Operation()
+                {
+                    Id = ChurchManager.Constants.Operation.Group_View,
+                    Description = "Can view group"
+                });
+
+            if (!currentOperations.Exists(x => x.Id == ChurchManager.Constants.Operation.Group_Edit))
+                db.Operations.Add(new Operation()
+                {
+                    Id = ChurchManager.Constants.Operation.Group_Edit,
+                    Description = "Can edit group"
+                });
+
+            if (!currentOperations.Exists(x => x.Id == ChurchManager.Constants.Operation.Group_Create))
+                db.Operations.Add(new Operation()
+                {
+                    Id = ChurchManager.Constants.Operation.Group_Create,
+                    Description = "Can create group"
+                });
+
+            if (!currentOperations.Exists(x => x.Id == ChurchManager.Constants.Operation.Group_Delete))
+                db.Operations.Add(new Operation()
+                {
+                    Id = ChurchManager.Constants.Operation.Group_Delete,
+                    Description = "Can delete group"
                 });
 
             #endregion

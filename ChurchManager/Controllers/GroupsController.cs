@@ -12,11 +12,13 @@ using ChurchManager.Models;
 
 namespace ChurchManager.Controllers
 {
+    [Authorize]
     public class GroupsController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-        
+
         // GET: Groups
+        [CustomAuthorize(Operations = Constants.Operation.Group_View)]
         public ActionResult Index(string successMessage, string errorMessage)
         {
             // Get Error message if exists.
@@ -35,6 +37,7 @@ namespace ChurchManager.Controllers
         }
 
         // GET: Groups/Details/5
+        [CustomAuthorize(Operations = Constants.Operation.Group_View)]
         public ActionResult Details(Guid? id)
         {
             if (id == null)
@@ -63,40 +66,10 @@ namespace ChurchManager.Controllers
             model.Members = members;
             return View(model);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Details(GroupView model)
-        {
-            var ownerId = Operator().OwnerGroupId;
+       
 
-            //if (ModelState.IsValid)
-            //{
-            var group = db.Groups.Find(model.Id);
-            var dbmember = group.Persons.ToList();
-
-
-            foreach (var item in model.Members)
-            {
-                var exists = dbmember.Where(x => x.Id == item.Id).FirstOrDefault() != null;
-                
-                    //group.Persons.Add(item);
-            }
-            
-                db.SaveChanges();
-            //}
-            var personList = db.People.Where(x => x.OwnerGroupId == ownerId)
-               .ProjectTo<PersonView>().ToList()
-               .Select(s => new SelectListItem() { Value = s.Id.ToString(), Text = s.Name }).ToList();
-
-
-            model.PersonList = personList;
-
-            //return View(model);
-            ModelState.Clear();
-            return PartialView("_GroupMember", model);
-        }
-
-            // GET: Groups/Create
+        // GET: Groups/Create
+        [CustomAuthorize(Operations = Constants.Operation.Group_Create)]
         public ActionResult Create()
         {
             var group = new Group() { IsActive = true };
@@ -108,6 +81,7 @@ namespace ChurchManager.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Operations = Constants.Operation.Group_Create)]
         public ActionResult Create( Group group)
         {
             group.IsActive = true;
@@ -126,6 +100,7 @@ namespace ChurchManager.Controllers
         }
 
         // GET: Groups/Edit/5
+        [CustomAuthorize(Operations = Constants.Operation.Group_Edit)]
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -145,6 +120,7 @@ namespace ChurchManager.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Operations = Constants.Operation.Group_Edit)]
         public ActionResult Edit( Group group)
         {
             var dbGroup = db.Groups.Find(group.Id);
@@ -162,6 +138,7 @@ namespace ChurchManager.Controllers
         }
 
         // GET: Groups/Delete/5
+        [CustomAuthorize(Operations = Constants.Operation.Group_Delete)]
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -180,6 +157,7 @@ namespace ChurchManager.Controllers
             model.Controller = "Groups";
             model.Id = id.ToString();
             model.Name = group.Name;
+            model.IsSubmit = true;
 
             return PartialView("_ModalDelete", model);
         }
@@ -187,6 +165,7 @@ namespace ChurchManager.Controllers
         // POST: Groups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Operations = Constants.Operation.Group_Delete)]
         public ActionResult DeleteConfirmed(Guid id)
         {
             string error = string.Empty;
@@ -219,6 +198,7 @@ namespace ChurchManager.Controllers
         //------------------------------------------------------
         [RenderAjaxPartialScripts]
         [HttpPost]
+        [CustomAuthorize(Operations = Constants.Operation.Group_Edit)]
         public ActionResult Add(GroupView model)
         {
 
@@ -251,6 +231,7 @@ namespace ChurchManager.Controllers
 
         [RenderAjaxPartialScripts]
         [HttpPost]
+        [CustomAuthorize(Operations = Constants.Operation.Group_Edit)]
         public ActionResult Remove(GroupView model)
         {
             var memberToDelete = model.Members.Where(x => x.IsDeleted).FirstOrDefault();
@@ -277,17 +258,6 @@ namespace ChurchManager.Controllers
             return PartialView("_GroupMember", model);
         }
 
-        //public ActionResult Index()
-        //{
-        //    var model = new SampleModel(); // Or get model
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //public ActionResult Index(SampleModel model)
-        //{
-        //    // Save model to DB
-        //    return RedirectToAction("Index");
-        //}
+       
     }
 }

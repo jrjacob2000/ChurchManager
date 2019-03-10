@@ -12,6 +12,7 @@ using ChurchManager.Models;
 
 namespace ChurchManager.Controllers
 {
+    [Authorize]
     public class PeopleController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();

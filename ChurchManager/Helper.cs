@@ -54,6 +54,12 @@ namespace ChurchManager
             public const string Person_Edit = "Person_Edit";
             public const string Person_View = "Person_View";
 
+            //group
+            public const string Group_Create = "Group_Create";
+            public const string Group_Delete = "Group_Delete";
+            public const string Group_Edit = "Group_Edit";
+            public const string Group_View = "Group_View";
+
             //administrator
             public const string Role_Create = "Role_Create";
             public const string Role_Delete = "Role_Delete";
