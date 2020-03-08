@@ -220,6 +220,10 @@
     <Compile Include="Migrations\201903040754186_ManyToManyGroupPerson.Designer.cs">
       <DependentUpon>201903040754186_ManyToManyGroupPerson.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202003081352400_addAccountChart.cs" />
+    <Compile Include="Migrations\202003081352400_addAccountChart.Designer.cs">
+      <DependentUpon>202003081352400_addAccountChart.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountChart.cs" />
     <Compile Include="Models\AccountChartType.cs" />
@@ -240,6 +244,7 @@
     <Compile Include="Models\ReferenceList.cs" />
     <Compile Include="Models\RoleOperation.cs" />
     <Compile Include="Models\GroupView.cs" />
+    <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Models\Family.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -7460,6 +7465,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903040754186_ManyToManyGroupPerson.resx">
       <DependentUpon>201903040754186_ManyToManyGroupPerson.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003081352400_addAccountChart.resx">
+      <DependentUpon>202003081352400_addAccountChart.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
