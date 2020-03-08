@@ -1,0 +1,75 @@
+﻿@model ChurchManager.Models.AccountChart
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="box box-default">
+    <div class="box-header with-border">
+        <h3 class="box-title">Group Info</h3>
+        <div class="pull-right">
+            @*<input type="submit" value="Save" class="btn btn-success" />*@
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-6">
+                @Html.ValidationSummary(true, "fdsfds ", new { @class = "text-danger" })
+                <div class="form-group">
+                    <label>Code:</label>
+                    @Html.DisplayFor(model => model.Code)
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Account Name:</label>
+                    @Html.DisplayFor(model => model.Name)
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Account Type:</label>
+                    @Html.DisplayFor(model => model.Type)
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Active:</label>
+                    @Html.DisplayFor(model => model.IsActive)
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Created By:</label>
+                    @Html.DisplayFor(model => model.EnteredBy)
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Created On:</label>
+                    @Html.DisplayFor(model => model.DateEntered)
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Updated By:</label>
+                    @Html.DisplayFor(model => model.EditedBy)
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <label>Updated On:</label>
+                    @Html.DisplayFor(model => model.DateLastEdited)
+                </div>
+                <!-- /.form-group -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-6">
+
+            </div>
+            <!-- /.col -->
+        </div>
+
+    </div>
+    <!-- /.box-body -->
+</div>
+
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

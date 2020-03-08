@@ -182,6 +182,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AccountChartsController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -220,6 +221,8 @@
       <DependentUpon>201903040754186_ManyToManyGroupPerson.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AccountChart.cs" />
+    <Compile Include="Models\AccountChartType.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationRole.cs" />
@@ -7416,6 +7419,11 @@
     <Content Include="Views\People\_RemoveGroup.cshtml" />
     <Content Include="Views\Family\_FamilyMembersPartial.cshtml" />
     <Content Include="Views\Family\_FamilyListPartial.cshtml" />
+    <Content Include="Views\AccountCharts\Create.cshtml" />
+    <Content Include="Views\AccountCharts\Delete.cshtml" />
+    <Content Include="Views\AccountCharts\Details.cshtml" />
+    <Content Include="Views\AccountCharts\Edit.cshtml" />
+    <Content Include="Views\AccountCharts\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

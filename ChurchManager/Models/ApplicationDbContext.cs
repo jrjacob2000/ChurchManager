@@ -58,5 +58,7 @@ namespace ChurchManager.Models
         public System.Data.Entity.DbSet<ChurchManager.Models.Person> People { get; set; }
 
         public System.Data.Entity.DbSet<ChurchManager.Models.Group> Groups { get; set; }
+
+        public System.Data.Entity.DbSet<ChurchManager.Models.AccountChart> AccountCharts { get; set; }
     }
 }
