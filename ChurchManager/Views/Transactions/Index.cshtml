@@ -1,0 +1,189 @@
+﻿*@model IEnumerable<ChurchManager.Models.TransactionView>
+
+    <style>
+        #tblTrans {
+            width:100% !important
+        }
+    
+    </style>
+@{
+    ViewBag.Title = "Transactions";
+}
+
+
+@Html.AntiForgeryToken()
+
+<div class="box">
+    <div class="box-header">        
+        <div class="pull-left col-md-6">  
+            <form class="form-horizontal">
+                <div class="form-group form-inline">
+                    <label>Filter</label>
+                    @Html.DropDownList("acctRegisterId", ((List<ChurchManager.Models.AccountChart>)ViewBag.AccountOptions).GetAccountRegister(((Guid)ViewBag.AccountRegistryId).ToString()), null, new { id = "ddlTrans", @class = "form-control select", onchange = "AccountRegisterOnChange(this);" })
+                </div>                
+            </form>            
+         
+        </div>
+        <div class="pull-right">
+            <button  id = "btnCreate" onclick="RedirectToCreate() ;return false;" class="btn btn-success"><i class="fa fa-plus"></i> Create New</button>
+        </div>
+        
+    </div>
+    <div class="box-body">
+        <table id="tblTrans" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+
+                    </th>
+                    <th>
+                        TransactionDate
+                    </th>
+                    <th>
+                        Payee
+                    </th>
+                    <th>
+                        Account
+                    </th>
+                    <th>
+                        Fund
+                    </th>
+
+                    <th>
+                        Payment
+                    </th>
+                    <th>
+                        Deposit
+                    </th>
+                    <th style="min-width:78px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+
+@section Scripts {
+
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        var tableTrans;
+        $(document).ready(function () {
+            tableTrans = $('#tblTrans').DataTable({
+               "scrollX": true,
+                "searching": false,
+                "ordering": false,
+                "paging": true,
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "Transactions/GetList",
+                    "data": function(d){
+                         d.acctRegisterId = GetAccountRegisterValue();                        
+                      } 
+                },
+                "aoColumns": [
+                    {
+                        "mDataProp": "Id",
+                        "visible": false
+                    },
+                    {
+                        "mDataProp": "TransactionDateString",
+                        "render": function(data, type, row, meta){
+                            if(type === 'display'){
+                                data = '<a href="Transactions/Details/' + row.Id + '">' + data + '</a>';
+                            }
+
+                            return data;
+                         }
+                    },
+                    { "mDataProp": "Payee" },
+                    { "mDataProp": "AccountName" },
+                    { "mDataProp": "FundName" },
+                    { "mDataProp": "Payment" },
+                    { "mDataProp": "Deposit" },
+                    {
+                        //"class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": '<a href="" class="editor_edit btn btn-primary fa fa-pencil"></a>  <a href="" class="editor_delete btn btn-danger fa fa-trash"></a>'
+                    }
+                ]
+            });
+
+            // Delete a record
+            $('#tblTrans').on('click', 'a.editor_edit', function (e) {                
+                e.preventDefault();
+               var $row = $(this).closest('tr');
+                var data = tableTrans.row($row).data();
+                
+                 window.location.href = '/Transactions/Edit/' + data['Id'];
+
+            });
+            
+            // Delete a record
+            $('#tblTrans').on('click', 'a.editor_delete', function (e) {                
+                e.preventDefault();
+               var $row = $(this).closest('tr');
+                var data = tableTrans.row($row).data();
+                
+                ConfirmDelete(data['Id'])
+
+            });
+
+            function ConfirmDelete(id) {
+                jQuery.noConflict();
+                // Delete any existing modal before spawning another.
+                $('#Ajax-Modal').remove();
+
+                $.ajax({
+                    url: 'Transactions/Delete/' + id,
+                    type: 'get',
+                    cache: false,
+                    data: { postId: id },//{ postId: $(e.target).data('id') },
+                    success: function (data) {
+                        $(data).modal(
+                            {
+                                backdrop: 'static',
+                                keyboard: false,
+                            });
+                    },
+                    error: function (data) {
+                        alert(data.responseText);
+                    }
+                });
+            }
+
+            $('#ddlTrans').on('change', function () {
+                var selectedValue = $(this).val();
+                $('#btnCreate').prop('href', 'Transactions/Create/' + selectedValue);
+            });
+        });
+
+
+        function GetAccountRegisterValue() {
+            return $('#ddlTrans').val();
+        }
+
+        function AccountRegisterOnChange(e) {           
+            if (tableTrans != null) {
+                tableTrans.ajax.reload();
+            }
+        }
+
+        function RedirectToCreate() {
+
+            window.location.href = 'Transactions/Create?accountRegistryId=' + GetAccountRegisterValue();
+        }
+
+
+
+        
+    </script>
+}
+

@@ -1,0 +1,117 @@
+﻿@model ChurchManager.Models.TransactionView
+
+@{
+    ViewBag.Title = "New Transaction";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <div class="pull-left">
+                @Html.LabelFor(model => model.AccountRegistryId, htmlAttributes: new { @class = "control-label col-md-12" })
+                <div class="col-md-10 ">
+                    @Html.DropDownListFor(x => x.AccountRegistryId, Model.AccountOptions.GetAccountRegister(Model.AccountRegistryId.ToString()), "Select Account Register", new { @class = "form-control select" })
+
+                    @Html.ValidationMessageFor(model => model.AccountRegistryId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="pull-right">
+                <input type="submit" value="Save" class="btn btn-success" />
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-2">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TransactionDate, htmlAttributes: new { @class = "control-label" })
+
+                        @Html.EditorFor(model => model.TransactionDate, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.TransactionDate, "", new { @class = "text-danger" })
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Payee, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Payee, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Payee, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Payment, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Payment, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Payment, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Deposit, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Deposit, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Deposit, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AccountId, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(x => x.AccountId, Model.AccountOptions.GetAccounts(), "Select Account", new { @class = "form-control select" })
+                        @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AccountFundId, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(x => x.AccountFundId, Model.AccountOptions.GetFunds(), "Select Fund", new { @class = "form-control select" })
+                        @Html.ValidationMessageFor(model => model.AccountFundId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- bootstrap datepicker -->
+    <script src="~/AdminLTE_2_4_2/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
+ 
+    <script type="text/javascript">
+        
+        $(document).ready(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2();
+            //Date picker
+            $('#TransactionDate').datepicker({
+                autoclose: true
+            });
+                       
+        
+        });
+    </script>
+}

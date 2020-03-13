@@ -153,11 +153,9 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
+                            <li><a href="@Url.Action("Index","Transactions")"><i class="fa fa-circle-o"></i>Transactions</a></li>
+                            <li><a href="@Url.Action("Create","Transactions")"><i class="fa fa-circle-o"></i> New Transaction</a></li>
                             <li><a href="@Url.Action("Index","AccountCharts")"><i class="fa fa-circle-o"></i>Account Charts</a></li>
-                            <li><a href="../charts/chartjs.html"><i class="fa fa-circle-o"></i> View all Deposit</a></li>
-                            <li><a href="../charts/morris.html"><i class="fa fa-circle-o"></i> New Deposit</a></li>
-                            <li><a href="../charts/flot.html"><i class="fa fa-circle-o"></i> Flot</a></li>
-                            <li><a href="../charts/inline.html"><i class="fa fa-circle-o"></i> Inline charts</a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -417,12 +415,12 @@
         <script src='@Url.Content("~/Scripts/jquery.validate.js")' type='text/javascript'></script>
         <script src='@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")' type='text/javascript'></script>
 
-
         @Scripts.Render("~/bundles/jquery")
         @*@Scripts.Render("~/bundles/bootstrap")*@
         @RenderSection("scripts", required: false)
         @Html.RenderPartialViewScripts()
 
+        <script src='@Url.Content("~/Scripts/requiredIfValidator.js")' type='text/javascript'></script>
         <script type="text/javascript">
 
             // On page ready...
@@ -435,7 +433,6 @@
                 }
 
             });
-
 
         </script>
 

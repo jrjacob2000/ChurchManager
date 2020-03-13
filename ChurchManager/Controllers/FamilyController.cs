@@ -201,7 +201,7 @@ namespace ChurchManager.Controllers
             string message = string.Empty;
             Family familyModel = db.Families.Find(id);
 
-            var containsMember = db.People.Where(x => x.Family.ID == id).Count() > 0;
+            var containsMember = db.People.Where(x => x.Family.ID == id).Any();
             if (containsMember)
             {
                 error = "You cannot delete family containing members. Please remove all members first.";

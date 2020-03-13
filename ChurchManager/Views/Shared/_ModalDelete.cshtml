@@ -48,7 +48,7 @@
                             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
                             @if(@Model.IsSubmit)
                             {
-                                <button type="submit" id="btnConfirmdelete" value="save" class="btn btn-primary ">Confirm Delete</button>
+                                <button type="submit" id="btnConfirmdelete" value="save" @((Model.DisableSubmit) ? "disabled" : "")  class="btn btn-primary ">Confirm Delete</button>
                             }
                             else
                             {

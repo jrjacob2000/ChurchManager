@@ -15,13 +15,20 @@ namespace ChurchManager.Models
         [Required]
         public string Name { get; set; }
         [Display(Name ="Active")]
-        public bool IsActive { get; set; }
         public DateTime DateEntered { get; set; }
         public Guid EnteredBy { get; set; }
         public DateTime? DateLastEdited { get; set; }
         public Guid? EditedBy { get; set; }
         public Guid OwnerGroupId { get; set; }
-        public AccountChartType Type { get; set; }
+        public AccountChartTypeEnum Type { get; set; }
+        [Display(Name = "Show in Register")]
+        public bool ShowInRegister { get; set; }
+
+        [ForeignKey("AccountId")]
+        public virtual ICollection<TransactionLine> TransactionLines { get; set; }
+
+        [ForeignKey("AccountRegisterId")]
+        public virtual ICollection<Transaction> Transactions { get; set; }
 
     }
 }

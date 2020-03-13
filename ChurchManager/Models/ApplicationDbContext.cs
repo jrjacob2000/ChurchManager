@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Web;
 
@@ -24,6 +25,8 @@ namespace ChurchManager.Models
             //Make sure to call the base method first:
             base.OnModelCreating(modelBuilder);
 
+            //remove the cascade delete for accountChart -> transactionLines
+            modelBuilder.Entity<ChurchManager.Models.AccountChart>().HasMany(t => t.TransactionLines).WithRequired().WillCascadeOnDelete(false);
 
             //modelBuilder.Entity<ApplicationRole>().HasMany(role => role.Operations)
             //    .WithMany(operation => operation.RoleId)
@@ -60,5 +63,9 @@ namespace ChurchManager.Models
         public System.Data.Entity.DbSet<ChurchManager.Models.Group> Groups { get; set; }
 
         public System.Data.Entity.DbSet<ChurchManager.Models.AccountChart> AccountCharts { get; set; }
+
+        public System.Data.Entity.DbSet<ChurchManager.Models.Transaction> Transactions { get; set; }
+
+        public System.Data.Entity.DbSet<ChurchManager.Models.TransactionLine> TransactionLines { get; set; }
     }
 }

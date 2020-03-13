@@ -166,8 +166,8 @@
                         new SelectListItem() {Text = "Philippines", Value="PH"},
                         new SelectListItem() {Text = "United State of America", Value="US"},
                         new SelectListItem() {Text = "Japan", Value="JP"}
-                    },"--", new { @class = "form-control select2" })
-
+                    }, "--", new { @class = "form-control select2" })
+                    @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-3">

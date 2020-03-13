@@ -20,5 +20,7 @@ namespace ChurchManager.Models
         public string ModalMessage { get; set; }
 
         public bool IsSubmit { get; set; }
+
+        public bool DisableSubmit { get; set; }
     }
 }

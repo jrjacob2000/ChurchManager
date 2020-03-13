@@ -39,20 +39,21 @@ namespace ChurchManager.Models
                 return string.Format("{0}, {1}", LastName, FirstName);
             }
         }
-    
+
+        [Required]
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
-       
+        [Required]
         public string LastName { get; set; }
         public string Suffix { get; set; }
-        
+        [Required]
         public string Address1 { get; set; }
         public string Address2 { get; set; }
-        
+        [Required]
         public string City { get; set; }
         public string State { get; set; }
         public string Zip { get; set; }
-        
+        [Required]
         public string Country { get; set; }
         public string HomePhone { get; set; }
         public string WorkPhone { get; set; }

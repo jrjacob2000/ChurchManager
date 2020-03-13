@@ -113,7 +113,7 @@ namespace ChurchManager.Controllers
                 db.Families.Add(family);
                 person.Family = family;
             }
-            else
+            else if(!string.IsNullOrEmpty(personView.SelectedFamilyId))
             {
                 person.Family = db.Families.Find(new Guid(personView.SelectedFamilyId));
             }

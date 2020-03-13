@@ -49,7 +49,6 @@ namespace ChurchManager.Controllers
         public ActionResult Create(AccountChart accountChart)
         {
           
-            accountChart.IsActive = true;
             accountChart.DateEntered = DateTime.Now;
             accountChart.EnteredBy = new Guid(Operator().Id);
             accountChart.OwnerGroupId = Operator().OwnerGroupId;
@@ -87,13 +86,13 @@ namespace ChurchManager.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Code,Name,IsActive,Type")] AccountChart accountChart)
+        public ActionResult Edit([Bind(Include = "Id,Code,Name,IsActive,Type,ShowInRegister")] AccountChart accountChart)
         {
             AccountChart accountChartDb = db.AccountCharts.Find(accountChart.Id);
             accountChartDb.Code = accountChart.Code;
             accountChartDb.Name = accountChart.Name;
             accountChartDb.Type = accountChart.Type;
-            accountChartDb.IsActive = true;
+            accountChartDb.ShowInRegister = accountChart.ShowInRegister;
             accountChartDb.DateLastEdited = DateTime.Now;
             accountChartDb.EditedBy = new Guid(Operator().Id);
 
@@ -114,10 +113,13 @@ namespace ChurchManager.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             AccountChart accountChart = db.AccountCharts.Find(id);
+
             if (accountChart == null)
             {
                 return HttpNotFound();
             }
+
+            var canBeDeleted = !(accountChart.TransactionLines.Any() || accountChart.Transactions.Any());
 
             ModalDelete model = new ModalDelete();
             model.Action = "Delete";
@@ -125,6 +127,12 @@ namespace ChurchManager.Controllers
             model.Id = id.ToString();
             model.Name = accountChart.Name;
             model.IsSubmit = true;
+
+            if (!canBeDeleted)
+            {
+                model.ModalMessage = "This account cannot be deleted, its already contains transactions";
+                model.DisableSubmit = true;
+            }
 
             return PartialView("_ModalDelete", model);
             //return View(accountChart);
@@ -136,6 +144,9 @@ namespace ChurchManager.Controllers
         public ActionResult DeleteConfirmed(Guid id)
         {
             AccountChart accountChart = db.AccountCharts.Find(id);
+            if(accountChart.Transactions.Any() || accountChart.TransactionLines.Any())
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
             db.AccountCharts.Remove(accountChart);
             db.SaveChanges();
             return RedirectToAction("Index");

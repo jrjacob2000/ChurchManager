@@ -307,7 +307,47 @@ namespace ChurchManager.Migrations
                     ReferenceType = ReferenceType.FamilyRole.ToString()
                 });
 
-           
+            if (!currentReferenceList.Exists(x => x.Id == "0" && x.ReferenceType == "AccountChartType"))
+                db.ReferenceList.Add(new ReferenceList()
+                {
+                    Id = "0",
+                    Description = AccountChartTypeEnum.Asset.ToString(),
+                    ReferenceType = "AccountChartType"
+                });
+
+            if (!currentReferenceList.Exists(x => x.Id == "1" && x.ReferenceType == "AccountChartType"))
+                db.ReferenceList.Add(new ReferenceList()
+                {
+                    Id = "1",
+                    Description = AccountChartTypeEnum.Liability.ToString(),
+                    ReferenceType = "AccountChartType"
+                });
+
+            if (!currentReferenceList.Exists(x => x.Id == "2" && x.ReferenceType == "AccountChartType"))
+                db.ReferenceList.Add(new ReferenceList()
+                {
+                    Id = "2",
+                    Description = AccountChartTypeEnum.Liability.ToString(),
+                    ReferenceType = "AccountChartType"
+                });
+
+            if (!currentReferenceList.Exists(x => x.Id == "3" && x.ReferenceType == "AccountChartType"))
+                db.ReferenceList.Add(new ReferenceList()
+                {
+                    Id = "3",
+                    Description = AccountChartTypeEnum.Income.ToString(),
+                    ReferenceType = "AccountChartType"
+                });
+
+            if (!currentReferenceList.Exists(x => x.Id == "4" && x.ReferenceType == "AccountChartType"))
+                db.ReferenceList.Add(new ReferenceList()
+                {
+                    Id = "4",
+                    Description = AccountChartTypeEnum.Expenses.ToString(),
+                    ReferenceType = "AccountChartType"
+                });
+                       
+
         }
     }
 }
