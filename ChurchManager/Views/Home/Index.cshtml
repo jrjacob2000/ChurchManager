@@ -1,4 +1,5 @@
-﻿@{
+﻿@model ChurchManager.Models.DashboardView
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -10,39 +11,9 @@
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
-                    <h3>150</h3>
+                    <h3>@Model.People</h3>
 
-                    <p>New Orders</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-bag"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-green">
-                <div class="inner">
-                    <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                    <p>Bounce Rate</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-stats-bars"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-yellow">
-                <div class="inner">
-                    <h3>44</h3>
-
-                    <p>User Registrations</p>
+                    <p>People</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-person-add"></i>
@@ -53,14 +24,44 @@
         <!-- ./col -->
         <div class="col-lg-3 col-xs-6">
             <!-- small box -->
-            <div class="small-box bg-red">
+            <div class="small-box bg-green">
                 <div class="inner">
-                    <h3>65</h3>
+                    <h3>@Model.Family</h3>
 
-                    <p>Unique Visitors</p>
+                    <p>Families</p>
                 </div>
                 <div class="icon">
-                    <i class="ion ion-pie-graph"></i>
+                    <i class="ion ion-person-stalker"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3><sup style="font-size: 20px">&#8369;</sup>@Model.YearToDateExpenses</h3>
+
+                    <p>Year To Date Expenses</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-arrow-graph-down-right"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3><sup style="font-size: 20px">&#8369;</sup>@Model.YearToDateRevenue</h3>
+
+                    <p>Year To Date Revenue</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-cash"></i>
                 </div>
                 <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
@@ -77,13 +78,13 @@
                 <div class="box-header">
                     <i class="fa fa-th"></i>
 
-                    <h3 class="box-title">Revenue Graph</h3>                    
+                    <h3 class="box-title">Revenue Graph</h3>
                 </div>
                 <div class="box-body border-radius-none">
                     <div class="chart" id="line-chart" style="height: 250px;"></div>
                 </div>
                 <!-- /.box-body -->
-               
+
             </div>
 
 
@@ -116,7 +117,13 @@
 
 @section Scripts {
     <script src="~/AdminLTE_2_4_2/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-   
+
+    <!-- Bootstrap 3.3.7 -->
+    <script src="~/AdminLTE_2_4_2/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Morris.js charts -->
+    <script src="~/AdminLTE_2_4_2/bower_components/raphael/raphael.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/morris.js/morris.min.js"></script>
+
     <!-- Sparkline -->
     <script src="~/AdminLTE_2_4_2/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
     <!-- jvectormap -->
@@ -136,7 +143,7 @@
     <!-- FastClick -->
     <script src="~/AdminLTE_2_4_2/bower_components/fastclick/lib/fastclick.js"></script>
 
-<script>
+    <script>
 
     $(document).ready(function () {
 
@@ -146,22 +153,11 @@
 
            var line = new Morris.Line({
             element          : 'line-chart',
-            resize           : true,
-            data             : [
-              { month: '2019-01', item1: 2666, item2: 2666 },
-              { month: '2019-02', item1: 2778, item2: 2294 },
-              { month: '2019-03', item1: 4912, item2: 1969 },
-              { month: '2019-04', item1: 3767, item2: 3597 },
-              { month: '2019-05', item1: 6810, item2: 1914 },
-              { month: '2019-06', item1: 5670, item2: 10000 },
-              { month: '2019-07', item1: 4820, item2: 3795 },
-              { month: '2019-08', item1: 15073, item2: 5967 },
-              { month: '2019-09', item1: 10687, item2: 4460 },
-              { month: '2019-10', item1: 8432, item2: 5713 }
-            ],
+               resize: true,
+               data: result,
             xkey             : 'month',
-            ykeys            : ['item1','item2'],
-            labels: ['Income','Expnenses'],
+            ykeys            : ['revenue','expenses'],
+            labels: ['Income','Expenses'],
             lineColors       : ['green','red'],
             lineWidth        : 2,
             hideHover        : 'auto',
@@ -171,32 +167,32 @@
             pointStrokeColors: ['#efefef'],
             gridLineColor    : '#efefef',
             gridTextFamily   : 'Open Sans',
-            gridTextSize     : 10,
-            xLabelFormat: function (x) { return months[x.getMonth()]; },
-            xLabels	: "month"
+               gridTextSize: 10,
+              // xLabelFormat: function (d) {  
+
+              //     return months[d.getMonth()] + "-" + d.getDate();
+                
+              //},
+           
           });
         });
 
-          
+        $.get('@Url.Action("GetKnobChart")', function (result) {
 
-          // Donut Chart
-          var donut = new Morris.Donut({
-            element  : 'sales-chart',
-            resize   : true,
-            colors   : ['#3c8dbc', '#f56954', '#00a65a'],
-            data     : [
-              { label: 'Building Funds', value: 12 },
-              { label: 'General Funds', value: 30 },
-              { label: 'Mission Funds', value: 0 }
-            ],
-            hideHover: 'auto'
-          });
+            // Donut Chart
+            var donut = new Morris.Donut({
+                element: 'sales-chart',
+                resize: true,
+                colors: ['#3c8dbc', '#f56954', '#00a65a'],
+                data: result,
+                hideHover: 'auto'
+            });
+        });
 
-        
     });
 
 
 
-</script>
+    </script>
 
 }

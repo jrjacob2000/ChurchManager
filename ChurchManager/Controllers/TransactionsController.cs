@@ -18,30 +18,11 @@ namespace ChurchManager.Controllers
         public ActionResult Index(Guid? accountRegistryId)
         {
 
-           //var transview = (from t in db.Transactions
-           //             join tl in db.TransactionLines on t.Id equals tl.TransactionId 
-           //             join a in db.AccountCharts on tl.AccountId equals a.Id
-           //             join f in db.AccountCharts on tl.FundId equals f.Id
-           //             where tl.AccountId != t.AccountRegisterId && (t.AccountRegisterId == accountRegistryId || accountRegistryId == null)
-           //             orderby t.DateEntered descending
-           //              select new TransactionView
-           //              {
-           //                  Id = t.Id,
-           //                  TransactionDate = t.TransactionDate,
-           //                  Payee = t.Payee,
-           //                  Comment = t.Comment,
-           //                  AccountRegistryId = t.AccountRegisterId,
-           //                  AccountId = tl.AccountId,
-           //                  AccountName = a.Name,
-           //                  AccountFundId = tl.FundId,
-           //                  FundName = f.Name,
-           //                  Payment = tl.Amount > 0 ? tl.Amount : (decimal?)null,
-           //                  Deposit = tl.Amount < 0 ? tl.Amount *-1 : (decimal?)null,
-           //              })
-           //              .ToList();
+           
 
             ViewBag.AccountOptions = db.AccountCharts.ToList(); //populate reference options
-            ViewBag.AccountRegistryId = accountRegistryId;
+            if(accountRegistryId != null && accountRegistryId.HasValue)
+                ViewBag.AccountRegistryId = accountRegistryId;
 
             return View(new List< TransactionView>());
         }

@@ -238,6 +238,7 @@
     <Compile Include="Models\ApplicationRoleView.cs" />
     <Compile Include="Models\Attendance.cs" />
     <Compile Include="Models\Church.cs" />
+    <Compile Include="Models\DashboardView.cs" />
     <Compile Include="Models\FamilyView.cs" />
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\Messages.cs" />
