@@ -2,30 +2,201 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+<!-- Main content -->
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>150</h3>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+                    <p>New Orders</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-bag"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>53<sup style="font-size: 20px">%</sup></h3>
+
+                    <p>Bounce Rate</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>44</h3>
+
+                    <p>User Registrations</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>65</h3>
+
+                    <p>Unique Visitors</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+    <!-- /.row -->
+    <!-- Main row -->
+    <div class="row">
+        <!-- Left col -->
+        <section class="col-lg-6">
+            <!-- solid sales graph -->
+            <div class="box box-solid bg-teal-gradient">
+                <div class="box-header">
+                    <i class="fa fa-th"></i>
+
+                    <h3 class="box-title">Revenue Graph</h3>                    
+                </div>
+                <div class="box-body border-radius-none">
+                    <div class="chart" id="line-chart" style="height: 250px;"></div>
+                </div>
+                <!-- /.box-body -->
+               
+            </div>
+
+
+        </section>
+        <!-- /.Left col -->
+        <!-- right col (We are only adding the ID to make the widgets sortable)-->
+        <section class="col-lg-6">
+
+            <!-- solid sales graph -->
+            <div class="box box-solid">
+                <div class="box-header">
+                    <i class="fa fa-th"></i>
+
+                    <h3 class="box-title">Funds Graph</h3>
+                </div>
+                <div class="box-body border-radius-none">
+                    <div class="chart" id="sales-chart" style="position: relative; height: 250px; "></div>
+                </div>
+                <!-- /.box-body -->
+
+            </div>
+
+        </section>
+        <!-- right col -->
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+    <!-- /.row (main row) -->
+
+</section>
+<!-- /.content -->
+
+@section Scripts {
+    <script src="~/AdminLTE_2_4_2/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+   
+    <!-- Sparkline -->
+    <script src="~/AdminLTE_2_4_2/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+    <!-- jvectormap -->
+    <script src="~/AdminLTE_2_4_2/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <!-- jQuery Knob Chart -->
+    <script src="~/AdminLTE_2_4_2/bower_components/jquery-knob/dist/jquery.knob.min.js"></script>
+    <!-- daterangepicker -->
+    <script src="~/AdminLTE_2_4_2/bower_components/moment/min/moment.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <!-- datepicker -->
+    <script src="~/AdminLTE_2_4_2/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <!-- Bootstrap WYSIHTML5 -->
+    <script src="~/AdminLTE_2_4_2/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <!-- Slimscroll -->
+    <script src="~/AdminLTE_2_4_2/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="~/AdminLTE_2_4_2/bower_components/fastclick/lib/fastclick.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        $.get('@Url.Action("GetLineChart")', function (result) {
+
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+           var line = new Morris.Line({
+            element          : 'line-chart',
+            resize           : true,
+            data             : [
+              { month: '2019-01', item1: 2666, item2: 2666 },
+              { month: '2019-02', item1: 2778, item2: 2294 },
+              { month: '2019-03', item1: 4912, item2: 1969 },
+              { month: '2019-04', item1: 3767, item2: 3597 },
+              { month: '2019-05', item1: 6810, item2: 1914 },
+              { month: '2019-06', item1: 5670, item2: 10000 },
+              { month: '2019-07', item1: 4820, item2: 3795 },
+              { month: '2019-08', item1: 15073, item2: 5967 },
+              { month: '2019-09', item1: 10687, item2: 4460 },
+              { month: '2019-10', item1: 8432, item2: 5713 }
+            ],
+            xkey             : 'month',
+            ykeys            : ['item1','item2'],
+            labels: ['Income','Expnenses'],
+            lineColors       : ['green','red'],
+            lineWidth        : 2,
+            hideHover        : 'auto',
+            gridTextColor    : '#fff',
+            gridStrokeWidth  : 0.4,
+            pointSize        : 4,
+            pointStrokeColors: ['#efefef'],
+            gridLineColor    : '#efefef',
+            gridTextFamily   : 'Open Sans',
+            gridTextSize     : 10,
+            xLabelFormat: function (x) { return months[x.getMonth()]; },
+            xLabels	: "month"
+          });
+        });
+
+          
+
+          // Donut Chart
+          var donut = new Morris.Donut({
+            element  : 'sales-chart',
+            resize   : true,
+            colors   : ['#3c8dbc', '#f56954', '#00a65a'],
+            data     : [
+              { label: 'Building Funds', value: 12 },
+              { label: 'General Funds', value: 30 },
+              { label: 'Mission Funds', value: 0 }
+            ],
+            hideHover: 'auto'
+          });
+
+        
+    });
+
+
+
+</script>
+
+}
