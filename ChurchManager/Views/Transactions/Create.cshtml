@@ -3,12 +3,18 @@
 @{
     ViewBag.Title = "New Transaction";
 }
+<style>
+    .error {
+        border-color: red
+    }
+</style>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "createTransFormId" }))
 {
-    @Html.AntiForgeryToken()
 
+    @Html.AntiForgeryToken()
     <div class="box box-default">
+
         <div class="box-header with-border">
             <div class="pull-left">
                 @Html.LabelFor(model => model.AccountRegistryId, htmlAttributes: new { @class = "control-label col-md-12" })
@@ -19,7 +25,8 @@
                 </div>
             </div>
             <div class="pull-right">
-                <input type="submit" value="Save" class="btn btn-success" />
+                <input type="submit" value="Save" class="btn btn-success" style="display:none" onclick="return validateSplits()" />
+                <input id="submit" type="button" value="Save Order" class="btn btn-warning" style="padding:10px 20px" />
             </div>
         </div>
         <!-- /.box-header -->
@@ -56,24 +63,29 @@
                         @Html.ValidationMessageFor(model => model.Deposit, "", new { @class = "text-danger" })
                     </div>
                 </div>
+                <div class="col-md-2"></div>
 
             </div>
-            <div class="row">
+
+
+            <div id="divSingleTrans" class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        @Html.LabelFor(model => model.AccountId, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(x => x.AccountId, Model.AccountOptions.GetAccounts(), "Select Account", new { @class = "form-control select" })
-                        @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
+                        <label class="control-label">Account</label>
+                        @*@Html.LabelFor(model => model.AccountId, htmlAttributes: new { @class = "control-label" })*@
+                        @Html.DropDownList("AccountId", Model.AccountOptions.GetAccounts(), "Select Account", new { @class = "form-control select" })
+                        @*@Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })*@
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        @Html.LabelFor(model => model.AccountFundId, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(x => x.AccountFundId, Model.AccountOptions.GetFunds(), "Select Fund", new { @class = "form-control select" })
-                        @Html.ValidationMessageFor(model => model.AccountFundId, "", new { @class = "text-danger" })
+                        <label class = "control-label">Fund</label>
+                        @*@Html.LabelFor(model => model.AccountFundId, htmlAttributes: new { @class = "control-label" })*@
+                        @Html.DropDownList("AccountFundId", Model.AccountOptions.GetFunds(), "Select Fund", new { @class = "form-control select" })
+                        @*@Html.ValidationMessageFor(model => model.AccountFundId, "", new { @class = "text-danger" })*@
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <div class="form-group">
                         @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label" })
                         @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control" } })
@@ -81,13 +93,52 @@
                     </div>
 
                 </div>
+                <div class="col-md-1">
+                    <div class="pull-right" style="margin-top: 23px">                        
+                        <input id="btnSplit" type="button" value="split" class="btn btn-primary" />
+                    </div>
+                </div>
 
             </div>
+
+            <div id="div_splitBody" style="display:none">
+                <div class="pull-right">
+                    <dl class="dl-horizontal">
+                        <dt> <label for="SplitBalance" class=" col-form-label" style="align-self:center">Balance:</label></dt>
+                        <dd>
+                            <input id="SplitBalanceDisplay" type="text" readonly class="form-control" style="width:200px" />
+                        </dd>
+
+                    </dl>
+                </div>
+                <table id="table_split" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>Fund</th>
+                            <th>Percent</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_splitBody">
+                    </tbody>
+                </table>
+
+
+                <div id="div_split"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="button" id="btnAddSplit" class="btn btn-primary" value="Add Another Row" />
+                        <button id="btnCancel" class="btn btn-default"><i class="fa fa-ban"></i> Cancel</button>
+
+                    </div>
+                </div>
+            </div>
+
+
         </div>
         <!-- /.box-body -->
     </div>
-
-
 }
 
 <div>
@@ -96,22 +147,308 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryunobtrusive")
+
     <!-- bootstrap datepicker -->
     <script src="~/AdminLTE_2_4_2/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
     <!-- Select2 -->
     <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
- 
+
     <script type="text/javascript">
+
+        //var splitBalance = $('#SplitBalance');
+        var splitBalanceDisplay = $('#SplitBalanceDisplay');
         
+
         $(document).ready(function () {
+      
             //Initialize Select2 Elements
             $('.select2').select2();
             //Date picker
             $('#TransactionDate').datepicker({
                 autoclose: true
             });
-                       
-        
+
+            var splitIndex = 0;
+            $("#btnAddSplit").click(function () {   
+
+                if ($('#createTransFormId').valid()) {
+                    $.ajax({
+                    url: '@Url.Action("Split", "Transactions")',
+                    type: 'get',
+                    data: { index: splitIndex },
+                    success: function (response) {
+                        splitIndex = splitIndex + 1;
+                        $("#tbody_splitBody").append(response);
+                    },
+                    error: function (error) {
+                        alert("error");
+                    }
+                });
+                }
+
+            });
+
+            $("#btnSplit").click(function () {  
+
+                if (!$('#createTransFormId').valid())
+                    return;
+
+                displayRemainingBalance();
+                
+               $("#divSingleTrans").hide();
+               $("#div_splitBody").show();
+
+                //add initial row
+                $.ajax({
+                    url: '@Url.Action("Split", "Transactions")',
+                    type: 'get',
+                    data: { index: splitIndex },
+                    success: function (response) {
+                        splitIndex = splitIndex + 1;
+                        $("#tbody_splitBody").append(response);
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+
+            });
+
+
+             $(document).on('click', '#tbody_splitBody .removeRow', function () {
+
+                $(this).closest('tr').remove();
+            });
+
         });
+
+
+        function GetRemainingBalance() {
+
+            var depValue = $('input[name="Deposit"]').val();
+            var payValue = $('input[name="Payment"]').val();
+
+            var remainingBal = 0.0;
+
+            if (depValue != null && depValue > 0) {
+                remainingBal = parseFloat(depValue);
+             }
+            else {
+                remainingBal = parseFloat(payValue);
+            }
+
+            $('.splitLineAmount').each(function () {
+
+                var amt = $(this).val() == "" ? 0 : $(this).val();
+                remainingBal = (remainingBal - amt);
+            });
+
+            return remainingBal;   
+        }
+
+        function displayRemainingBalance() {
+
+               splitBalanceDisplay.val(GetRemainingBalance());
+        }
+
+        function PercentChange() {
+            getPercentage("PercentField");
+            displayRemainingBalance();
+            
+        }
+
+        function splitAmountChange() {            
+            getPercentage("AmountField");
+            displayRemainingBalance();
+        }
+
+        function getPercentage(caller) {
+            
+            var depValue = $('input[name="Deposit"]').val();
+            var payValue = $('input[name="Payment"]').val();
+
+            var remainingBal = 0.0;
+
+            if (depValue != null && depValue > 0) {
+                remainingBal = parseFloat(depValue);
+             }
+            else {
+                remainingBal = parseFloat(payValue);
+            }
+
+            $('#tbody_splitBody tr').each(function (index, ele) {
+
+                if (caller == "PercentField") {
+                    var percent = $('input.Percent', this).val();
+                     var result = ((percent / 100) * remainingBal);
+                    $('input.splitLineAmount', this).val(result);
+                }
+
+                if (caller == "AmountField") {
+                    var value = $('input.splitLineAmount', this).val();
+                    var result = ((value / remainingBal) * 100);
+                    $('input.Percent', this).val(result);
+                }
+
+            })
+                        
+        }
+
+        function validateSplits() {
+
+            var rows = $("#tbody_splitBody").find('tr')
+            $(rows.find("select")).each(function () {
+                var missing = $(this).val() === ""
+
+                $(this).toggleClass('error', missing);
+                $(this).parent().find('p').remove();
+                if (missing) 
+                    $(this).parent().append('<p class="text-danger">this field is required</p>');
+                
+            });
+
+            $(rows.find("input.splitLineAmount")).each(function () {
+                var missing = $(this).val() === ""
+
+                $(this).toggleClass('error', missing);
+                $(this).parent().find('p').remove();
+                if (missing)
+                    $(this).parent().append('<p class="text-danger">this field is required</p>');
+        
+            });
+
+
+            return rows.find(".error").length==0
+        };
+
+        $('#Payment').change(function () {
+            $('#Deposit').val("");
+           if( $('#tbody_splitBody tr').length > 0)
+                displayRemainingBalance();
+        });
+
+        $('#Deposit').change(function () {
+            $('#Payment').val("");
+            if( $('#tbody_splitBody tr').length > 0)
+                displayRemainingBalance();
+        });
+
+        $('#btnCancel').click( function() {
+            var accountRegistryId = $('#AccountRegistryId').val();
+            var payment = $('#Payment').val();
+            var deposit = $('#Deposit').val();
+            var payee = $('#Payee').val();
+            var TransactionDate = $('#TransactionDate').val();
+            window.location.href = '/Transactions/Create?accountRegistryId=' + accountRegistryId + "&transDate=" + TransactionDate + "&pAmout=" + payment + "&dAmount=" + deposit + "&payee=" + payee;
+            return false;
+         });
+        
+        
+
+        $('#submit').click(function () {
+
+            var isValid = true;   
+            var isSplit = $('#tbody_splitBody tr').length > 0;
+
+            //validate itemz
+            if (!validateSplits())
+                isValid = false;
+
+
+            if (isSplit) {
+                //validate Balance
+                splitBalanceDisplay.toggleClass('error', GetRemainingBalance() != 0);
+                splitBalanceDisplay.parent().find('p').remove();
+                if (GetRemainingBalance() != 0) {
+                    splitBalanceDisplay.parent().append('<p class="text-danger">Incorrect amount allocation</p>');
+                    isValid = false;
+                }
+            }
+
+            if (!isValid)
+                return;
+
+            var list = [];
+            var errorItemCount = 0;
+            if (isSplit) {
+                $('#tbody_splitBody tr').each(function (index, ele) {
+
+                    var splitItem = {
+                        SplitAccountId: $('select.SplitAccountId', this).val(),
+                        SplitAccountFundId: $('select.SplitAccountFundId', this).val(),
+                        SplitAmount: parseFloat($('input.splitLineAmount', this).val())
+                    }
+                    list.push(splitItem);
+                })
+            }
+            else {
+                var accountEl = $('#AccountId');
+                var fundEl = $('#AccountFundId');
+
+                accountEl.parent().find('p').remove();
+                if (accountEl.val() == null || accountEl.val() == "") {                    
+                    accountEl.parent().append('<p class="text-danger">Account field is required</p>');
+                    isValid = false;                   
+                }
+
+                fundEl.parent().find('p').remove();
+                if (fundEl.val() == null || fundEl.val() == "") {                    
+                    fundEl.parent().append('<p class="text-danger">Fund field is required</p>');
+                    isValid = false;                   
+                }
+
+                if (isValid) {
+
+                    var amount = $('#Payment').val() == null || $('#Payment').val() == "" ? $('#Deposit').val() : $('#Payment').val();
+                    var splitItem = {
+                        SplitAccountId: $('#AccountId').val(),
+                        SplitAccountFundId: $('#AccountFundId').val(),
+                        SplitAmount: parseFloat(amount)
+                    }
+                    list.push(splitItem);
+                }
+            }
+                        
+            if (!$('#createTransFormId').valid() )
+                isValid = false;
+
+
+            if (!isValid)
+                return;
+
+            var data = {
+                TransactionDate: $('#TransactionDate').val().trim(),
+                Payee: $('#Payee').val().trim(),
+                AccountRegistryId: $('#AccountRegistryId').val().trim(),
+                //AccountId: $('#AccountId').val().trim(),
+                //AccountFundId: $('#AccountFundId').val().trim(),
+                Payment: $('#Payment').val().trim(),
+                Deposit: $('#Deposit').val().trim(),
+                Splits: list
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/transactions/CreateWithSplit',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.status == 200) {
+                          var accountRegistryId = $('#AccountRegistryId').val();
+                        window.location.href = '/Transactions?accountRegistryId=' + accountRegistryId;
+                    }
+                    else {
+                        alert('Error status: ' + data.status);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                    
+                }
+            });
+        });
+        
+
     </script>
 }

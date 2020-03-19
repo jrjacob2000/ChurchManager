@@ -17,9 +17,7 @@ namespace ChurchManager.Controllers
         // GET: Transactions
         public ActionResult Index(Guid? accountRegistryId)
         {
-
-           
-
+            
             ViewBag.AccountOptions = db.AccountCharts.ToList(); //populate reference options
             if(accountRegistryId != null && accountRegistryId.HasValue)
                 ViewBag.AccountRegistryId = accountRegistryId;
@@ -126,13 +124,33 @@ namespace ChurchManager.Controllers
         }
        
         // GET: Transactions/Create
-        public ActionResult Create(string accountRegistryId)
+        public ActionResult Create(Guid? accountRegistryId,DateTime? transDate, decimal? pAmout,decimal? dAmount,string payee)
         {
-            var transactionView = new TransactionView();
-            if(!string.IsNullOrEmpty(accountRegistryId))
-                transactionView.AccountRegistryId = new Guid( accountRegistryId);
-            transactionView.AccountOptions = db.AccountCharts.ToList();
-            return View(transactionView);
+            try
+            {
+                var transactionView = new TransactionView();
+                if (accountRegistryId != null && accountRegistryId.HasValue && accountRegistryId != Guid.Empty)
+                    transactionView.AccountRegistryId = accountRegistryId.Value;
+
+                if (transDate != null && transDate.HasValue)
+                    transactionView.TransactionDate = transDate;
+
+                if (pAmout != null && pAmout.HasValue)
+                    transactionView.Payment = pAmout;
+
+                if (dAmount != null && dAmount.HasValue)
+                    transactionView.Deposit = dAmount;
+
+                transactionView.Payee = payee;
+
+                transactionView.AccountOptions = db.AccountCharts.ToList();
+                transactionView.Splits = new List<Split>();
+                return View(transactionView);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // POST: Transactions/Create
@@ -152,7 +170,25 @@ namespace ChurchManager.Controllers
             if (transactionView.AccountFundId == Guid.Empty)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-           return Upsert(null, transactionView);
+           var result = Upsert(null, transactionView);
+
+            return View(result);
+        }
+
+        [HttpPost]
+        public JsonResult CreateWithSplit(TransactionView transactionView)
+        {
+            if (transactionView == null)
+                return new JsonResult { Data = new { status = 400 } };
+
+            if ((transactionView.Payment.HasValue && transactionView.Deposit.HasValue) ||
+              (!transactionView.Payment.HasValue && !transactionView.Deposit.HasValue))
+                return new JsonResult { Data = new { status = 400 } };
+                       
+
+            var data= Upsert(null, transactionView);
+
+            return new JsonResult { Data = new { status = data != null ? 200 : 500 } };
         }
 
         // GET: Transactions/Edit/5
@@ -211,10 +247,10 @@ namespace ChurchManager.Controllers
               (!transactionView.Payment.HasValue && !transactionView.Deposit.HasValue))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            if (transactionView.AccountFundId == Guid.Empty)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            return Upsert(transactionView.Id, transactionView);
+            var data =  Upsert(transactionView.Id, transactionView);
+
+            return RedirectToAction("Index", new { accountRegistryId = data.AccountRegistryId });
         }
 
         // GET: Transactions/Delete/5
@@ -258,6 +294,19 @@ namespace ChurchManager.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public ActionResult Split(int index)
+        {
+            ViewBag.Index = index;
+            var model = new Split();
+            model.index = index;
+            model.AccountOptions = db.AccountCharts.ToList();
+
+            
+            return PartialView("_Split", model);
+
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -289,7 +338,7 @@ namespace ChurchManager.Controllers
             return lines;
         }
 
-        private ActionResult Upsert(Guid? transactionId, TransactionView transactionView)
+        private TransactionView Upsert(Guid? transactionId, TransactionView transactionView)
         {
             //TODO:Add validation for payment its there's still a balance in fund or register account.
 
@@ -298,7 +347,7 @@ namespace ChurchManager.Controllers
             {
                 transaction = db.Transactions.Include("TransactionLines").Where(x => x.Id == transactionId).FirstOrDefault();
                 if(transaction == null)
-                    return HttpNotFound();
+                    return null;
             }
             else
             {
@@ -306,60 +355,79 @@ namespace ChurchManager.Controllers
                 transaction.Id = Guid.NewGuid();
             }
 
-            
-            transaction.AccountRegisterId = transactionView.AccountRegistryId;
-            transaction.TransactionDate = transactionView.TransactionDate.Value;
-            transaction.Comment = transactionView.Comment;
-            transaction.Payee = transactionView.Payee;
-            transaction.IsClosed = false;
-            transaction.Deleted = false;
-            transaction.DateEntered = DateTime.Now;
-            transaction.EnteredBy = new Guid(Operator().Id);
-            transaction.OwnerGroupId = Operator().OwnerGroupId;
-
-
-            Guid creditAcc;
-            Guid debitAcc;
-            decimal amount;
-            if (transactionView.Payment.HasValue)
-            {
-                creditAcc = transactionView.AccountRegistryId;
-                debitAcc = transactionView.AccountId;
-                amount = transactionView.Payment.Value;
-            }
-            else
-            {
-                creditAcc = transactionView.AccountId;
-                debitAcc = transactionView.AccountRegistryId;
-                amount = transactionView.Deposit.Value;
-            }
-
-
-            var lines = GetDebitCreditPair(transaction.Id, creditAcc, debitAcc, transactionView.AccountFundId, amount);
-
-
-            if (ModelState.IsValid)
+            try
             {
 
-                if (transactionId == null)
+                transaction.AccountRegisterId = transactionView.AccountRegistryId;
+                transaction.TransactionDate = transactionView.TransactionDate.Value;
+                transaction.Comment = transactionView.Comment;
+                transaction.Payee = transactionView.Payee;
+                transaction.IsClosed = false;
+                transaction.Deleted = false;
+                transaction.DateEntered = DateTime.Now;
+                transaction.EnteredBy = new Guid(Operator().Id);
+                transaction.OwnerGroupId = Operator().OwnerGroupId;
+
+                var lines = new List<TransactionLine>();
+                transactionView.Splits.ForEach(item =>
                 {
-                    transaction.TransactionLines = lines;
-                    db.Transactions.Add(transaction);
-                }
-                else
+                    bool isDeposit = transactionView.Deposit.HasValue;
+                    Guid creditId = isDeposit ? item.SplitAccountId : transactionView.AccountRegistryId;
+                    Guid debitId = isDeposit ? transactionView.AccountRegistryId : item.SplitAccountId ;
+                    decimal amount = item.SplitAmount;
+
+                    var itemLines = GetDebitCreditPair(transaction.Id, creditId, debitId, item.SplitAccountFundId, amount);
+                    lines.AddRange(itemLines);
+                });
+
+
+                //Guid creditAcc;
+                //Guid debitAcc;
+                //decimal amount;
+                //if (transactionView.Payment.HasValue)
+                //{
+                //    creditAcc = transactionView.AccountRegistryId;
+                //    debitAcc = transactionView.AccountId.Value;
+                //    amount = transactionView.Payment.Value;
+                //}
+                //else
+                //{
+                //    creditAcc = transactionView.AccountId.Value;
+                //    debitAcc = transactionView.AccountRegistryId;
+                //    amount = transactionView.Deposit.Value;
+                //}
+
+
+                //var lines = GetDebitCreditPair(transaction.Id, creditAcc, debitAcc, transactionView.AccountFundId.Value, amount);
+
+
+                if (ModelState.IsValid)
                 {
-                    transaction.TransactionLines.ToList().ForEach(x =>
-                        db.TransactionLines.Remove(x)
-                    ); 
-                    
-                    transaction.TransactionLines = lines;
-                }
+
+                    if (transactionId == null)
+                    {
+                        transaction.TransactionLines = lines;
+                        db.Transactions.Add(transaction);
+                    }
+                    else
+                    {
+                        transaction.TransactionLines.ToList().ForEach(x =>
+                            db.TransactionLines.Remove(x)
+                        );
+
+                        transaction.TransactionLines = lines;
+                    }
 
                     db.SaveChanges();
-                return RedirectToAction("Index",new { accountRegistryId = transactionView.AccountRegistryId});
+                    return transactionView;
+                }
+            }
+            catch (Exception ex)
+            { 
+                return null;
             }
 
-            return View(new TransactionView() );
+            return null; 
 
         }
     }
