@@ -22,7 +22,7 @@ namespace ChurchManager.Controllers
             if(accountRegistryId != null && accountRegistryId.HasValue)
                 ViewBag.AccountRegistryId = accountRegistryId;
 
-            return View(new List< TransactionView>());
+            return View(new List<TransactionListView>());
         }
 
         public JsonResult GetList(Guid? acctRegisterId, int? draw, int start, int length)
@@ -35,38 +35,39 @@ namespace ChurchManager.Controllers
                                   join a in db.AccountCharts on tl.AccountId equals a.Id
                                   join f in db.AccountCharts on tl.FundId equals f.Id
                                   where tl.AccountId != t.AccountRegisterId &&
-                                  (t.AccountRegisterId == acctRegisterId || acctRegisterId == null)
-                                  orderby t.DateEntered descending
-                                  select new TransactionView
+                                  (t.AccountRegisterId == acctRegisterId || acctRegisterId == null)  
+                                  group new { t, tl, a, f } by new { Id = t.Id } into tgrp
+                                  select new 
                                   {
-                                      Id = t.Id,
-                                      TransactionDate = t.TransactionDate,
-                                      Payee = t.Payee,
-                                      Comment = t.Comment,
-                                      AccountRegistryId = t.AccountRegisterId,
-                                      AccountId = tl.AccountId,
-                                      AccountName = a.Name,
-                                      AccountFundId = tl.FundId,
-                                      FundName = f.Name,
-                                      Payment = tl.Amount > 0 ? tl.Amount : (decimal?)null,
-                                      Deposit = tl.Amount < 0 ? tl.Amount * -1 : (decimal?)null,
+                                      Id = tgrp.Key.Id,
+                                      TransactionDate = tgrp.FirstOrDefault().t.TransactionDate,
+                                      Payee = tgrp.FirstOrDefault().t.Payee,
+                                      Comment = tgrp.FirstOrDefault().t.Comment,
+                                      AccountRegistryId = tgrp.FirstOrDefault().t.AccountRegisterId,
+                                      AccountId = tgrp.Count() > 1 ? (Guid?)null : tgrp.FirstOrDefault().tl.AccountId ,
+                                      AccountName = tgrp.Count() > 1 ? "- split -" : tgrp.FirstOrDefault().a.Name ,
+                                      AccountFundId = tgrp.Count() > 1 ? (Guid?)null : tgrp.FirstOrDefault().tl.FundId ,
+                                      FundName = tgrp.Count() > 1 ?  "- split -" : tgrp.FirstOrDefault().f.Name ,
+                                      Payment = tgrp.Sum(s => s.tl.Amount) > 0 ? tgrp.Sum(s => s.tl.Amount) : (decimal?)null,
+                                      Deposit = tgrp.Sum(s => s.tl.Amount) < 0 ? tgrp.Sum(s => s.tl.Amount) * -1 : (decimal?)null,
+                                      DateCreated = tgrp.FirstOrDefault().t.DateEntered
                                   });
 
+
+
             var transview = transviewquery
+            .OrderByDescending(o => o.DateCreated)
             .Skip(start)
             .Take(10)
             .ToList()
-            .Select(x => new TransactionView
+            .Select(x => new TransactionListView
             {
                 Id = x.Id,
-                TransactionDate = x.TransactionDate,
-                TransactionDateString = x.TransactionDate.Value.ToShortDateString(),
+                TransactionDate = x.TransactionDate.ToShortDateString(),
                 Payee = x.Payee,
                 Comment = x.Comment,
                 AccountRegistryId = x.AccountRegistryId,
-                AccountId = x.AccountId,
                 AccountName = x.AccountName,
-                AccountFundId = x.AccountFundId,
                 FundName = x.FundName,
                 Payment = x.Payment,
                 Deposit = x.Deposit,
@@ -167,8 +168,8 @@ namespace ChurchManager.Controllers
               (!transactionView.Payment.HasValue && !transactionView.Deposit.HasValue))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            if (transactionView.AccountFundId == Guid.Empty)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //if (transactionView.AccountFundId == Guid.Empty)
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
            var result = Upsert(null, transactionView);
 

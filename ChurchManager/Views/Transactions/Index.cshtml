@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ChurchManager.Models.TransactionView>
+﻿@model IEnumerable<ChurchManager.Models.TransactionListView>
 
     <style>
         #tblTrans {
@@ -93,7 +93,7 @@
                         "visible": false
                     },
                     {
-                        "mDataProp": "TransactionDateString",
+                        "mDataProp": "TransactionDate",
                         "render": function(data, type, row, meta){
                             if(type === 'display'){
                                 data = '<a href="Transactions/Details/' + row.Id + '">' + data + '</a>';

@@ -262,6 +262,7 @@
     <Compile Include="RequiredIf.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
+    <Compile Include="Models\TransactionListView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ActionRoles.xml" />
