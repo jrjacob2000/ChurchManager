@@ -4,7 +4,7 @@
     ViewBag.Title = "Edit";
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "createTransFormId" }))
 {
     @Html.AntiForgeryToken()
 
@@ -21,7 +21,8 @@
                 </div>
             </div>
             <div class="pull-right">
-                <input type="submit" value="Save" class="btn btn-success" />
+                <input type="submit" value="Save" class="btn btn-success" style="display:none" />
+                <input id="submit" type="button" value="Save" class="btn btn-warning" style="padding:10px 20px" />
             </div>
         </div>
         <!-- /.box-header -->
@@ -60,31 +61,81 @@
                 </div>
 
             </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.AccountId, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(x => x.AccountId, Model.AccountOptions.GetAccounts(), "Select Account", new { @class = "form-control select" })
-                        @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.AccountFundId, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(x => x.AccountFundId, Model.AccountOptions.GetFunds(), "Select Fund", new { @class = "form-control select" })
-                        @Html.ValidationMessageFor(model => model.AccountFundId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label" })
-                        @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
-                    </div>
+           
+                @if (Model.Splits.Count() == 1)
+                {
+                    var item = Model.Splits.FirstOrDefault();
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AccountId, htmlAttributes: new { @class = "control-label" })
+                                @Html.DropDownList("AccountId", Model.AccountOptions.GetAccounts(item.SplitAccountId.ToString()), "Select Account", new { @class = "form-control select" })
+                                @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AccountFundId, htmlAttributes: new { @class = "control-label" })
+                                @Html.DropDownList("AccountFundId", Model.AccountOptions.GetFunds(item.SplitAccountFundId.ToString()), "Select Fund", new { @class = "form-control select" })
+                                @Html.ValidationMessageFor(model => model.AccountFundId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label" })
+                                @Html.Editor("Comment", new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+                            </div>
 
-                </div>
+                        </div>
 
-            </div>
+                    </div>
+                }
+                else
+                {
+                    <div id="div_splitBody" >
+                        <div class="pull-right">
+                            <dl class="dl-horizontal">
+                                <dt> <label for="SplitBalance" class=" col-form-label" style="align-self:center">Balance:</label></dt>
+                                <dd>
+                                    <input id="SplitBalanceDisplay" type="text" readonly class="form-control" style="width:200px" />
+                                </dd>
+
+                            </dl>
+                        </div>
+                        <table id="table_split" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Account</th>
+                                    <th>Fund</th>
+                                    <th>Percent</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_splitBody">
+                                @foreach (var item in Model.Splits)
+                                {
+                                    item.AccountOptions = Model.AccountOptions;
+                                    int index = 0;
+                                    Html.RenderPartial("_Split", item, new ViewDataDictionary { { "index", index } });
+                                    index++;
+                                }
+                                </tbody>
+                        </table>
+
+
+                        <div id="div_split"></div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="button" id="btnAddSplit" class="btn btn-primary" value="Add Another Row" />
+                                <button id="btnCancel" class="btn btn-default"><i class="fa fa-ban"></i> Cancel</button>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            
+
         </div>
         <!-- /.box-body -->
     </div>
@@ -101,16 +152,6 @@
     <script src="~/AdminLTE_2_4_2/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
     <!-- Select2 -->
     <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
-    <script type="text/javascript">
+    <script src="~/Scripts/TransactionUpsert.js"></script>
 
-        $(document).ready(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2();
-            //Date picker
-            $('#TransactionDate').datepicker({
-                autoclose: true
-            });
-
-        });
-    </script>
 }

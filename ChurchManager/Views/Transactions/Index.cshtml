@@ -18,7 +18,7 @@
         <div class="pull-left col-md-6">  
             <form class="form-horizontal">
                 <div class="form-group form-inline">
-                    <label>Filter</label>
+                    <label>Filter by Registry: </label>
                     @Html.DropDownList("acctRegisterId", ((List<ChurchManager.Models.AccountChart>)ViewBag.AccountOptions).GetAccountRegister(ViewBag.AccountRegistryId != null ? ((Guid)ViewBag.AccountRegistryId).ToString() : null), null, new { id = "ddlTrans", @class = "form-control select", onchange = "AccountRegisterOnChange(this);" })
                 </div>                
             </form>            

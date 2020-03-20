@@ -104,9 +104,9 @@ namespace ChurchManager.Controllers
                                  Payee = t.Payee,
                                  Comment = t.Comment,
                                  AccountRegistryId = t.AccountRegisterId,
-                                 AccountId = tl.AccountId,
+                                 //AccountId = tl.AccountId,
                                  AccountName = a.Name,
-                                 AccountFundId = tl.FundId,
+                                 //AccountFundId = tl.FundId,
                                  FundName = f.Name,
                                  Payment = tl.Amount > 0 ? tl.Amount : tl.Amount * -1,
                                  EditedBy = t.EditedBy,
@@ -114,7 +114,7 @@ namespace ChurchManager.Controllers
                                  EnteredBy = t.EnteredBy,
                                  DateEntered = t.DateEntered
                              }).FirstOrDefault();
-                         
+
 
             if (transview == null)
             {
@@ -195,7 +195,7 @@ namespace ChurchManager.Controllers
         // GET: Transactions/Edit/5
         public ActionResult Edit(Guid? id)
         {
-            //TODO:Add validation for payment its there's still a balance in fund or register account.
+            //TODO:Add validation for payment if there's still a balance in fund or register account.
 
             if (id == null)
             {
@@ -216,14 +216,23 @@ namespace ChurchManager.Controllers
             transview.Payee = transaction.Payee;
             transview.Comment = transaction.Comment;
             transview.AccountRegistryId = transaction.AccountRegisterId;
+            transview.Splits = transaction.TransactionLines
+                                .Where(y => y.AccountId != transaction.AccountRegisterId)
+                                .Select(x => new Split() { 
+                                    Id = x.Id,
+                                    SplitAccountId = x.AccountId,
+                                    SplitAccountFundId = x.FundId,
+                                    SplitAmount = x.Amount
+                                }).ToList();
 
-            if (tranLines.Count() == 2)//handle split (single transaction =2)
-            {
-                transview.AccountId = tranLines.Where(x => x.AccountId != transaction.AccountRegisterId).First().AccountId;
-                transview.AccountFundId = tranLines.First().FundId;
-            }
+            //transview.AccountId = tranLines.Where(x => x.AccountId != transaction.AccountRegisterId).First().AccountId;
+            //if (tranLines.Count() == 2)//handle split (single transaction =2)
+            //{
+            //    transview.AccountId = tranLines.Where(x => x.AccountId != transaction.AccountRegisterId).First().AccountId;
+            //    transview.AccountFundId = tranLines.First().FundId;
+            //}
 
-            var amount = tranLines.Where(x => x.AccountId == transaction.AccountRegisterId).First().Amount;
+            var amount = tranLines.Where(x => x.AccountId == transaction.AccountRegisterId).Sum(s => s.Amount);
             if (amount > 0)
                 transview.Deposit = amount;
             else
@@ -349,11 +358,16 @@ namespace ChurchManager.Controllers
                 transaction = db.Transactions.Include("TransactionLines").Where(x => x.Id == transactionId).FirstOrDefault();
                 if(transaction == null)
                     return null;
+
+                transaction.DateLastEdited = DateTime.Now;
+                transaction.EditedBy = new Guid(Operator().Id);
             }
             else
             {
                 transaction = new Transaction();
                 transaction.Id = Guid.NewGuid();
+                transaction.DateEntered = DateTime.Now;
+                transaction.EnteredBy = new Guid(Operator().Id);
             }
 
             try

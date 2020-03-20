@@ -16,7 +16,7 @@ namespace ChurchManager.Models
 
         public DateTime? TransactionDate { get; set; }
 
-        public string TransactionDateString { get; set; }
+        //public string TransactionDateString { get; set; }
 
         public string Payee { get; set; }
 
@@ -73,6 +73,7 @@ namespace ChurchManager.Models
     }
     public class Split { 
         public int index { get; set; }
+        public Guid? Id { get; set; }
         [Required]
         public Guid SplitAccountId { get; set; }
         [Required]
