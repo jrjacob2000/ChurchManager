@@ -30,13 +30,15 @@ namespace ChurchManager.Models
         [Obsolete]
         public Guid? AccountId { get; set; }
 
+        [Obsolete]
         [Display(Name = "Account")]
         public string AccountName { get; set; }
 
         [Obsolete]
         [Display(Name ="Fund")]
         public Guid? AccountFundId { get; set; }
-  
+
+        [Obsolete]
         [Display(Name = "Fund")]
         public string FundName { get; set; }
 
@@ -46,12 +48,15 @@ namespace ChurchManager.Models
         [RequiredIf("Payment", null, ErrorMessage = "Either Deposit or Payment is required")]
         public Decimal? Deposit { get; set; }
 
+        [Obsolete]
         [Display(Name = "Updated Date")]
         public DateTime? DateLastEdited { get; set; }
         [Display(Name = "Created Date")]
 
+        [Obsolete]
         public DateTime DateEntered { get; set; }
 
+        [Obsolete]
         [Display(Name = "Created By")]
         public Guid EnteredBy { get; set; }
 

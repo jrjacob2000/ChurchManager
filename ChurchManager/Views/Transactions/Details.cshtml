@@ -1,4 +1,4 @@
-﻿@model ChurchManager.Models.TransactionView
+﻿@model ChurchManager.Models.TransactionDetailView
 
 @{
     ViewBag.Title = "Details";
@@ -31,11 +31,11 @@
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.AccountRegistryId)
+                @Html.DisplayNameFor(model => model.AccountRegistryName)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.AccountRegistryId)
+                @Html.DisplayFor(model => model.AccountRegistryName)
             </dd>
 
             <dt>
@@ -54,20 +54,25 @@
                 @Html.DisplayFor(model => model.FundName)
             </dd>
             <dt>
-                <label>Amount</label>
+                @Html.DisplayNameFor(model => model.Payment)
             </dt>
 
             <dd>
                 @Html.DisplayFor(model => model.Payment)
             </dd>
             <dt>
+                @Html.DisplayNameFor(model => model.Deposit)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Deposit)
+            </dd>
+            <dt>
                 @Html.DisplayNameFor(model => model.Comment)
             </dt>
-
             <dd>
                 @Html.DisplayFor(model => model.Comment)
             </dd>
-                                          
+
             <dt>
                 @Html.DisplayNameFor(model => model.EnteredBy)
             </dt>

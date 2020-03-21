@@ -44,7 +44,7 @@ $(document).ready(function () {
 
         //add initial row
         $.ajax({
-            url: '@Url.Action("Split", "Transactions")',
+            url: "/Transactions/Split",//'@Url.Action("Split", "Transactions")',
             type: 'get',
             data: { index: splitIndex },
             success: function (response) {
@@ -127,7 +127,7 @@ function getPercentage(caller) {
             if (percent != null && percent != "") {
                 var result = ((percent / 100) * remainingBal);
                 $('input.splitLineAmount', this).val(result);
-            }            
+            }
         }
 
         if (caller == "AmountField") {
@@ -217,8 +217,7 @@ $('#submit').click(function () {
         return;
 
     var list = [];
-    var errorItemCount = 0;
-    if (isSplit) {
+    if (isSplit) {// split transaction
         $('#tbody_splitBody tr').each(function (index, ele) {
 
             var splitItem = {
@@ -229,16 +228,19 @@ $('#submit').click(function () {
             list.push(splitItem);
         })
     }
-    else {
+    else { //single transactions
         var accountEl = $('#AccountId');
         var fundEl = $('#AccountFundId');
 
+        //validate account
         accountEl.parent().find('p').remove();
         if (accountEl.val() == null || accountEl.val() == "") {
             accountEl.parent().append('<p class="text-danger">Account field is required</p>');
             isValid = false;
         }
 
+
+        //validate fund
         fundEl.parent().find('p').remove();
         if (fundEl.val() == null || fundEl.val() == "") {
             fundEl.parent().append('<p class="text-danger">Fund field is required</p>');
@@ -268,8 +270,7 @@ $('#submit').click(function () {
         TransactionDate: $('#TransactionDate').val().trim(),
         Payee: $('#Payee').val().trim(),
         AccountRegistryId: $('#AccountRegistryId').val().trim(),
-        //AccountId: $('#AccountId').val().trim(),
-        //AccountFundId: $('#AccountFundId').val().trim(),
+        Comment: $('#Comment').val().trim(),
         Payment: $('#Payment').val().trim(),
         Deposit: $('#Deposit').val().trim(),
         Splits: list
@@ -295,4 +296,3 @@ $('#submit').click(function () {
         }
     });
 });
-    

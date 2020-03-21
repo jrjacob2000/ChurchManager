@@ -96,23 +96,26 @@ namespace ChurchManager.Controllers
                              join tl in db.TransactionLines on t.Id equals tl.TransactionId
                              join a in db.AccountCharts on tl.AccountId equals a.Id
                              join f in db.AccountCharts on tl.FundId equals f.Id
+                             join ta in db.AccountCharts on t.AccountRegisterId equals ta.Id
+                             join ue in db.Users on t.EnteredBy.ToString() equals ue.Id
+                             join uu in db.Users on t.EnteredBy.ToString() equals uu.Id
                              where tl.AccountId != t.AccountRegisterId && t.Id == id
-                             select new TransactionView
+                             group new { t, tl, a, f, ta, ue,uu } by new { Id = t.Id } into tgrp
+                             select new TransactionDetailView
                              {
-                                 Id = t.Id,
-                                 TransactionDate = t.TransactionDate,
-                                 Payee = t.Payee,
-                                 Comment = t.Comment,
-                                 AccountRegistryId = t.AccountRegisterId,
-                                 //AccountId = tl.AccountId,
-                                 AccountName = a.Name,
-                                 //AccountFundId = tl.FundId,
-                                 FundName = f.Name,
-                                 Payment = tl.Amount > 0 ? tl.Amount : tl.Amount * -1,
-                                 EditedBy = t.EditedBy,
-                                 DateLastEdited = t.DateLastEdited,
-                                 EnteredBy = t.EnteredBy,
-                                 DateEntered = t.DateEntered
+                                 Id = tgrp.Key.Id,
+                                 TransactionDate = tgrp.FirstOrDefault().t.TransactionDate,
+                                 Payee = tgrp.FirstOrDefault().t.Payee,
+                                 Comment = tgrp.FirstOrDefault().t.Comment,
+                                 AccountRegistryName = tgrp.FirstOrDefault().ta.Name,
+                                 AccountName = tgrp.FirstOrDefault().a.Name,
+                                 FundName = tgrp.FirstOrDefault().f.Name,
+                                 Payment = tgrp.Sum(x => x.tl.Amount) > 0 ? tgrp.Sum(x => x.tl.Amount) : (decimal?)null,
+                                 Deposit = tgrp.Sum(x => x.tl.Amount) > 0 ? (decimal?)null : tgrp.Sum(x => x.tl.Amount) * -1,
+                                 EditedBy = tgrp.FirstOrDefault().uu.UserName ,
+                                 DateLastEdited = tgrp.FirstOrDefault().t.DateLastEdited,
+                                 EnteredBy = tgrp.FirstOrDefault().ue.UserName,
+                                 DateEntered = tgrp.FirstOrDefault().t.DateEntered
                              }).FirstOrDefault();
 
 
@@ -225,12 +228,7 @@ namespace ChurchManager.Controllers
                                     SplitAmount = x.Amount
                                 }).ToList();
 
-            //transview.AccountId = tranLines.Where(x => x.AccountId != transaction.AccountRegisterId).First().AccountId;
-            //if (tranLines.Count() == 2)//handle split (single transaction =2)
-            //{
-            //    transview.AccountId = tranLines.Where(x => x.AccountId != transaction.AccountRegisterId).First().AccountId;
-            //    transview.AccountFundId = tranLines.First().FundId;
-            //}
+
 
             var amount = tranLines.Where(x => x.AccountId == transaction.AccountRegisterId).Sum(s => s.Amount);
             if (amount > 0)

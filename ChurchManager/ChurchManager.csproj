@@ -251,6 +251,7 @@
     <Compile Include="Models\RoleOperation.cs" />
     <Compile Include="Models\GroupView.cs" />
     <Compile Include="Models\Transaction.cs" />
+    <Compile Include="Models\TransactionDetailView.cs" />
     <Compile Include="Models\TransactionLine.cs" />
     <Compile Include="Models\TransactionView.cs" />
     <Compile Include="Models\UserViewModel.cs" />
@@ -7448,7 +7449,8 @@
     <Content Include="Views\Transactions\Edit.cshtml" />
     <Content Include="Views\Transactions\Index.cshtml" />
     <Content Include="Views\Transactions\_Split.cshtml" />
-    <Content Include="Views\Transactions\Create - Copy.cshtml" />
+    <Content Include="Views\Transactions\_SingleTransaction.cshtml" />
+    <Content Include="Views\Transactions\_SplitTransaction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

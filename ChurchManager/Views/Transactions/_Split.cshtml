@@ -16,7 +16,7 @@
                 @Html.DropDownListFor(x => x.SplitAccountFundId, Model.AccountOptions.GetFunds(), "Select Fund", new { @class = "form-control select SplitAccountFundId" })
            
         </td>
-        <td>
+        <td style="width:50px">
                 @Html.Editor(string.Format("Splits[{0}].Percent", Model.index), new { htmlAttributes = new { @class = "form-control Percent", @onchange = "PercentChange();" } })
         </td>
         <td>
