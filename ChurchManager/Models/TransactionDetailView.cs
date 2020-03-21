@@ -10,6 +10,7 @@ namespace ChurchManager.Models
     {
         public Guid Id { get; set; }
         [Display(Name ="Transaction Date")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime TransactionDate { get; set; }
         public string Payee { get; set; }
         public string Comment { get; set; }

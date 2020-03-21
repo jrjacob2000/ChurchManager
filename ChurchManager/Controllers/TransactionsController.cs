@@ -98,7 +98,7 @@ namespace ChurchManager.Controllers
                              join f in db.AccountCharts on tl.FundId equals f.Id
                              join ta in db.AccountCharts on t.AccountRegisterId equals ta.Id
                              join ue in db.Users on t.EnteredBy.ToString() equals ue.Id
-                             join uu in db.Users on t.EnteredBy.ToString() equals uu.Id
+                             join uu in db.Users on t.EditedBy.ToString() equals uu.Id
                              where tl.AccountId != t.AccountRegisterId && t.Id == id
                              group new { t, tl, a, f, ta, ue,uu } by new { Id = t.Id } into tgrp
                              select new TransactionDetailView
@@ -174,7 +174,7 @@ namespace ChurchManager.Controllers
             //if (transactionView.AccountFundId == Guid.Empty)
             //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-           var result = Upsert(null, transactionView);
+           var result = Upsert( transactionView);
 
             return View(result);
         }
@@ -190,7 +190,7 @@ namespace ChurchManager.Controllers
                 return new JsonResult { Data = new { status = 400 } };
                        
 
-            var data= Upsert(null, transactionView);
+            var data= Upsert(transactionView);
 
             return new JsonResult { Data = new { status = data != null ? 200 : 500 } };
         }
@@ -225,7 +225,7 @@ namespace ChurchManager.Controllers
                                     Id = x.Id,
                                     SplitAccountId = x.AccountId,
                                     SplitAccountFundId = x.FundId,
-                                    SplitAmount = x.Amount
+                                    SplitAmount = x.Amount > 0 ? x.Amount :  x.Amount *-1
                                 }).ToList();
 
 
@@ -256,7 +256,7 @@ namespace ChurchManager.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
 
-            var data =  Upsert(transactionView.Id, transactionView);
+            var data =  Upsert( transactionView);
 
             return RedirectToAction("Index", new { accountRegistryId = data.AccountRegistryId });
         }
@@ -346,12 +346,12 @@ namespace ChurchManager.Controllers
             return lines;
         }
 
-        private TransactionView Upsert(Guid? transactionId, TransactionView transactionView)
+        private TransactionView Upsert(TransactionView transactionView)
         {
             //TODO:Add validation for payment its there's still a balance in fund or register account.
-
+            var transactionId = transactionView.Id;
             Transaction transaction;
-            if (transactionId.HasValue)
+            if (transactionId != null && transactionId != Guid.Empty)
             {
                 transaction = db.Transactions.Include("TransactionLines").Where(x => x.Id == transactionId).FirstOrDefault();
                 if(transaction == null)
@@ -377,8 +377,6 @@ namespace ChurchManager.Controllers
                 transaction.Payee = transactionView.Payee;
                 transaction.IsClosed = false;
                 transaction.Deleted = false;
-                transaction.DateEntered = DateTime.Now;
-                transaction.EnteredBy = new Guid(Operator().Id);
                 transaction.OwnerGroupId = Operator().OwnerGroupId;
 
                 var lines = new List<TransactionLine>();
@@ -417,7 +415,7 @@ namespace ChurchManager.Controllers
                 if (ModelState.IsValid)
                 {
 
-                    if (transactionId == null)
+                    if (transactionId == null || transactionId == Guid.Empty)
                     {
                         transaction.TransactionLines = lines;
                         db.Transactions.Add(transaction);

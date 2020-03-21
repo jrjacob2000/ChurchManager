@@ -40,7 +40,7 @@ $(document).ready(function () {
         displayRemainingBalance();
 
         $("#divSingleTrans").hide();
-        $("#div_splitBody").show();
+        $("#divSplitTransaction").show();
 
         //add initial row
         $.ajax({
@@ -169,6 +169,8 @@ function validateSplits() {
     return rows.find(".error").length == 0
 };
 
+function isSplitTransaction() { return $('#tbody_splitBody tr').length > 0;}
+
 $('#Payment').change(function () {
     $('#Deposit').val("");
     if ($('#tbody_splitBody tr').length > 0)
@@ -196,7 +198,7 @@ $('#btnCancel').click(function () {
 $('#submit').click(function () {
 
     var isValid = true;
-    var isSplit = $('#tbody_splitBody tr').length > 0;
+    var isSplit = isSplitTransaction();
 
     //validate itemz
     if (!validateSplits())
@@ -218,6 +220,8 @@ $('#submit').click(function () {
 
     var list = [];
     if (isSplit) {// split transaction
+
+        //get all split items
         $('#tbody_splitBody tr').each(function (index, ele) {
 
             var splitItem = {
@@ -266,11 +270,13 @@ $('#submit').click(function () {
     if (!isValid)
         return;
 
+ 
     var data = {
+        Id : $('#Id').val(),
         TransactionDate: $('#TransactionDate').val().trim(),
         Payee: $('#Payee').val().trim(),
         AccountRegistryId: $('#AccountRegistryId').val().trim(),
-        Comment: $('#Comment').val().trim(),
+        Comment: isSplit ? $(".Comment1").val().trim() : $(".Comment0").val().trim(),
         Payment: $('#Payment').val().trim(),
         Deposit: $('#Deposit').val().trim(),
         Splits: list

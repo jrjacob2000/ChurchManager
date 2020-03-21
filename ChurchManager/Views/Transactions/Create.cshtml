@@ -7,6 +7,9 @@
     .error {
         border-color: red
     }
+    .hide {
+        display:none
+    }
 </style>
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "createTransFormId" }))
@@ -68,71 +71,15 @@
             </div>
 
 
-            <div id="divSingleTrans" class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="control-label">Account</label>
-                        @*@Html.LabelFor(model => model.AccountId, htmlAttributes: new { @class = "control-label" })*@
-                        @Html.DropDownList("AccountId", Model.AccountOptions.GetAccounts(), "Select Account", new { @class = "form-control select" })
-                        @*@Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })*@
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="control-label">Fund</label>
-                        @*@Html.LabelFor(model => model.AccountFundId, htmlAttributes: new { @class = "control-label" })*@
-                        @Html.DropDownList("AccountFundId", Model.AccountOptions.GetFunds(), "Select Fund", new { @class = "form-control select" })
-                        @*@Html.ValidationMessageFor(model => model.AccountFundId, "", new { @class = "text-danger" })*@
-                    </div>
-                </div>
-                <div class="col-md-5">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label" })
-                        @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
-                    </div>
-
-                </div>
-                <div class="col-md-1">
-                    <div class="pull-right" style="margin-top: 23px">
-                        <input id="btnSplit" type="button" value="split" class="btn btn-primary" />
-                    </div>
-                </div>
-
+            <div id="divSingleTrans" >
+                @{
+                   
+                    Html.RenderPartial("_SingleTransaction",Model);
+                    }
             </div>
-
-            <div id="div_splitBody" style="display:none">
-                <div class="pull-right">
-                    <dl class="dl-horizontal">
-                        <dt> <label for="SplitBalance" class=" col-form-label" style="align-self:center">Balance:</label></dt>
-                        <dd>
-                            <input id="SplitBalanceDisplay" type="text" readonly class="form-control" style="width:200px" />
-                        </dd>
-
-                    </dl>
-                </div>
-                <table id="table_split" class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Account</th>
-                            <th>Fund</th>
-                            <th>Percent</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody_splitBody">
-                    </tbody>
-                </table>
-
-
-                <div id="div_split"></div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <input type="button" id="btnAddSplit" class="btn btn-primary" value="Add Another Row" />
-                        <button id="btnCancel" class="btn btn-default"><i class="fa fa-ban"></i> Cancel</button>
-
-                    </div>
-                </div>
+            <div id="divSplitTransaction" style="display:none">
+                @{Html.RenderPartial("_SplitTransaction");}            
+               
             </div>
 
 
@@ -154,4 +101,5 @@
     <!-- Select2 -->
     <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
     <script src="~/Scripts/TransactionUpsert.js"></script>
+
 }

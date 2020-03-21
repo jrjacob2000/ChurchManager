@@ -11,7 +11,7 @@ namespace ChurchManager.Models
     {
         public Guid Id { get; set; }
         [Required]
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         [Display(Name = "Transaction Date")]
 
         public DateTime? TransactionDate { get; set; }

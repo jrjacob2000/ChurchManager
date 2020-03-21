@@ -1,23 +1,40 @@
 ﻿@model ChurchManager.Models.TransactionView
 
 
+@{
+    bool onEdit = ViewBag.onEdit != null ? ViewBag.onEdit : false;
+}
+<div class="row">
 
-
-<div class="col-md-6">
-
-</div>
-<div class="col-md-5">
-    <div class="form-group">
-        @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label" })
-        @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control" } })
-        @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="control-label">Account</label>
+            @*@Html.LabelFor(model => model.AccountId, htmlAttributes: new { @class = "control-label" })*@
+            @Html.DropDownList("AccountId", Model.AccountOptions.GetAccounts(Model.Splits.FirstOrDefault()?.SplitAccountId.ToString()), "Select Account", new { @class = "form-control select" })
+            @*@Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })*@
+        </div>
     </div>
-</div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="control-label">Fund</label>
+            @*@Html.LabelFor(model => model.AccountFundId, htmlAttributes: new { @class = "control-label" })*@
+            @Html.DropDownList("AccountFundId", Model.AccountOptions.GetFunds(Model.Splits.FirstOrDefault()?.SplitAccountFundId.ToString()), "Select Fund", new { @class = "form-control select" })
+            @*@Html.ValidationMessageFor(model => model.AccountFundId, "", new { @class = "text-danger" })*@
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="form-group">
+            <label class="control-label">Comment</label>
+            @Html.Editor("Comment", new { htmlAttributes = new { @class = "form-control Comment0", Name = "Comment0" } })
+        </div>
 
-<div class="col-md-6">
-</div>
-<div class="col-md-1">
-    <div class="pull-right" style="margin-top: 23px">
-        <input id="btnSplit" type="button" value="split" class="btn btn-primary" />
+    </div>
+    <div class="col-md-1">
+        @if (!onEdit)
+            { 
+                <div class="pull-right" style="margin-top: 23px">
+                    <input id="btnSplit" type="button" value="split" class="btn btn-primary" />
+                </div>
+            }
     </div>
 </div>
