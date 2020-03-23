@@ -198,6 +198,7 @@
     <Compile Include="Controllers\PeopleController.cs" />
     <Compile Include="Controllers\PermissionController.cs" />
     <Compile Include="Controllers\ReferenceListController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="CustomAuthorizeAttribute.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Global.asax.cs">
@@ -240,7 +241,9 @@
     <Compile Include="Models\Church.cs" />
     <Compile Include="Models\DashboardView.cs" />
     <Compile Include="Models\FamilyView.cs" />
+    <Compile Include="Models\FinancialPosition.cs" />
     <Compile Include="Models\Group.cs" />
+    <Compile Include="Models\IncomeStatement.cs" />
     <Compile Include="Models\Messages.cs" />
     <Compile Include="Models\ModalDelete.cs" />
     <Compile Include="Models\Operation.cs" />
@@ -248,6 +251,7 @@
     <Compile Include="Models\PersonGroup.cs" />
     <Compile Include="Models\PersonView.cs" />
     <Compile Include="Models\ReferenceList.cs" />
+    <Compile Include="Models\ReportTitle.cs" />
     <Compile Include="Models\RoleOperation.cs" />
     <Compile Include="Models\GroupView.cs" />
     <Compile Include="Models\Transaction.cs" />
@@ -7451,6 +7455,8 @@
     <Content Include="Views\Transactions\_Split.cshtml" />
     <Content Include="Views\Transactions\_SingleTransaction.cshtml" />
     <Content Include="Views\Transactions\_SplitTransaction.cshtml" />
+    <Content Include="Views\Reports\Index.cshtml" />
+    <Content Include="Views\Reports\FinancialPosition.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

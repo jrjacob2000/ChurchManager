@@ -1,0 +1,311 @@
+﻿@model ChurchManager.Models.FinancialPosition
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    print {
+        display: none
+    }
+
+    @@media print {
+        .print {
+            display: block
+        }
+
+        .no-print {
+            display: none;
+        }
+
+        .report {
+            border: 0 !important;
+        }
+    }
+
+    .table > tbody > tr > td,
+    .table > tbody > tr > th,
+    .table > tfoot > tr > td,
+    .table > tfoot > tr > th,
+    .table > thead > tr > td,
+    .table > thead > tr > th {
+        border: 0;
+    }
+
+    .table,
+    .table tr,
+    .table th,
+    .table td {
+        background-color: white !important;
+        padding-right: 15px !important;
+    }
+
+        .table > tbody + tbody {
+            border-top: 0 !important;
+            margin-top: 20px
+        }
+
+    .accountCol {
+        padding-left: 50px !important
+    }
+
+    .accountColFooter {
+        border-top-style: solid !important;
+        border-top-width: 2px !important;
+        border-top-color: black !important;
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .nonAccountCol {
+        text-align: right !important;
+    }
+
+    .report {
+        position: relative;
+        background: #fff;
+        border: 1px solid #f4f4f4;
+        padding: 20px;
+        margin: 10px 25px;
+    }
+    .netAsset {
+        border-top-style: solid !important;
+        border-top-width: 2px !important;
+        border-top-color: black !important;
+        text-align: right;
+        font-weight: bold;
+        padding-top: 20px !important;
+    }
+    .netAsset-DescCol {
+        padding-top: 20px !important;
+    }
+</style>
+<div class="box box-default no-print">
+    <div class="box-header with-border">       
+        <div class="col-md-12" >
+            <div class="pull-right no-print">
+                <button onclick="javascript:window.print()" class="btn btn-default"><i class="fa fa-print"></i>Print</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+@{
+    IEnumerable<string> cols = null;
+    if (Model != null)
+    {
+        var defaultCol = ((IDictionary<string, object>)Model.Assets.FirstOrDefault());
+        if (defaultCol == null)
+        {
+            defaultCol = ((IDictionary<string, object>)Model.LIabilities.FirstOrDefault());
+        }
+        if (defaultCol != null)
+        {
+            cols = defaultCol.Select(x => x.Key);
+        }
+    }
+
+}
+@if (Model != null && cols != null)
+{
+
+    <section class="report .print">
+        @*report title*@
+        <div class="row">
+            <div class="col-xs-12">
+
+                <h2 class="page-header" style="text-align:center">
+                    <small class="pull-right">Date: 2/10/2014</small><br />
+                    <strong>@Model.ReportTitle.ChurchName</strong>
+                    <small>
+                        Satement of Activities
+                    </small>
+                    <small>
+                        @Model.ReportTitle.Period
+                    </small>
+
+
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 table-responsive">
+
+                <table id="tableAssets" class="table table-condensed" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+
+                            @foreach (var col in cols)
+                            {
+                                <th>@(col == "Account" ? "" : col)</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_Assets">
+                        <tr>
+                            <td style="font-weight:bold; font-size:larger" colspan=@cols.Count()>Assets</td>
+                        </tr>
+                        @if (Model.Assets != null)
+                        {
+                            foreach (var item in Model.Assets)
+                            {
+                                var rows = (IDictionary<string, object>)item;
+
+                                <tr>
+                                    @foreach (var key in cols)
+                                    {
+                                        if (rows.ContainsKey(key))//check if column field is existing
+                                        {
+                                            <td class=@(key == "Account" ? "accountCol" : "nonAccountCol")>@rows[key]</td>
+                                        }
+                                        else
+                                        {
+                                            <td class=@(key == "Account" ? "accountCol" : "nonAccountCol")>0</td>
+                                        }
+
+                                    }
+                                </tr>
+
+                            }
+                            <tr id="tfoot_Assets" style="font-weight:bold">
+                                @for (var i = 0; cols.Count() > i; i++)
+                                {
+                                    if (i > 0)
+                                    {
+                                        <td class="accountColFooter"></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="accountCol"></td>
+                                    }
+
+                                }
+                            </tr>
+                        }
+
+                    </tbody>
+
+                    @if (Model.LIabilities != null && Model.LIabilities.Count() > 0)
+                    {
+                        <tbody id="tbody_Liabilities">
+
+
+                            <tr>
+                                <td style="font-weight:bold; font-size:larger" colspan=@cols.Count()>Liabilities</td>
+                            </tr>
+
+                            @foreach (var item in Model.LIabilities)
+                            {
+                                var rows = (IDictionary<string, object>)item;
+                                //var cols = rows.Select(x => x.Key);
+
+                                <tr>
+                                    @foreach (var key in cols)
+                                    {
+                                        if (rows.ContainsKey(key))
+                                        {
+                                            <td class=@(key == "Account" ? "accountCol" : "nonAccountCol")>@rows[key]</td>
+                                        }
+                                        else
+                                        {
+                                            <td class=@(key == "Account" ? "accountCol" : "nonAccountCol")>0</td>
+                                        }
+
+                                    }
+                                </tr>
+
+                            }
+
+                        </tbody>
+                        <tr id="tfoot_Liabilities" style="font-weight:bold">
+                            @for (var i = 0; cols.Count() > i; i++)
+                            {
+                                if (i > 0)
+                                {
+                                    <td class="accountColFooter"></td>
+                                }
+                                else
+                                {
+                                    <td class="accountCol"></td>
+                                }
+
+                            }
+                        </tr>
+                    }
+                    <tbody id="tbody_NetAssetEndOfPeriod">
+
+                        @foreach (var item in Model.NetAssets)
+                        {
+                            var rows = (IDictionary<string, object>)item;
+                            //var cols = rows.Select(x => x.Key);
+
+                            <tr>
+                                @foreach (var key in cols)
+                                {
+                                    <td style="font-weight:bold" class=@(key == "Account" ? "netAsset-DescCol" : "netAsset")>@rows[key]</td>
+                                }
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    </section>
+}
+else
+{
+    <div class="box box-default">
+        <div class="box-body">
+            <p style="text-align:center; font-weight:bold">No data found</p>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="~/AdminLTE_2_4_2/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2();
+            //Date picker
+            $('#dateFrom').datepicker({
+                autoclose: true
+            });
+            $('#dateTo').datepicker({
+                autoclose: true
+            });
+
+            $('table thead th').each(function (i) {
+                calculateColumn(i);
+            });
+        });
+
+        function calculateColumn(index) {
+            var totalIncome = 0;
+            $('#tbody_Assets tr').each(function () {
+                var value = parseFloat($('td', this).eq(index).text());
+                if (!isNaN(value)) {
+                    totalIncome += value;
+                }
+            });
+            $('#tfoot_Assets td').eq(index).text(index > 0 ? parseFloat(totalIncome).toFixed(2) : "Total Current Assets");
+
+            var totalExpenses = 0;
+            $('#tbody_Liabilities tr').each(function () {
+                var value = parseFloat($('td', this).eq(index).text());
+                if (!isNaN(value)) {
+                    totalExpenses += value;
+                }
+            });
+            $('#tfoot_Liabilities td').eq(index).text(index > 0 ? parseFloat(totalExpenses).toFixed(2) : "Total Liabilities");
+        }
+    </script>
+}

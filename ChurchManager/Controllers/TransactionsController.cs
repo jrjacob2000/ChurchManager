@@ -10,6 +10,7 @@ using ChurchManager.Models;
 
 namespace ChurchManager.Controllers
 {
+    [Authorize]
     public class TransactionsController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -392,26 +393,6 @@ namespace ChurchManager.Controllers
                 });
 
 
-                //Guid creditAcc;
-                //Guid debitAcc;
-                //decimal amount;
-                //if (transactionView.Payment.HasValue)
-                //{
-                //    creditAcc = transactionView.AccountRegistryId;
-                //    debitAcc = transactionView.AccountId.Value;
-                //    amount = transactionView.Payment.Value;
-                //}
-                //else
-                //{
-                //    creditAcc = transactionView.AccountId.Value;
-                //    debitAcc = transactionView.AccountRegistryId;
-                //    amount = transactionView.Deposit.Value;
-                //}
-
-
-                //var lines = GetDebitCreditPair(transaction.Id, creditAcc, debitAcc, transactionView.AccountFundId.Value, amount);
-
-
                 if (ModelState.IsValid)
                 {
 
@@ -441,5 +422,7 @@ namespace ChurchManager.Controllers
             return null; 
 
         }
+
+       
     }
 }
