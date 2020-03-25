@@ -4,7 +4,7 @@
     ViewBag.Title = "Edit";
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "createTransFormId" }))
 {
     @Html.AntiForgeryToken()
 
@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="pull-right">
-                <input type="submit" value="Save" class="btn btn-success" />
+                <input id="submit" type="button" value="Save" class="btn btn-warning" style="padding:10px 20px" />
             </div>
         </div>
         <!-- /.box-header -->
@@ -60,31 +60,17 @@
                 </div>
 
             </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.AccountId, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(x => x.AccountId, Model.AccountOptions.GetAccounts(), "Select Account", new { @class = "form-control select" })
-                        @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.AccountFundId, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(x => x.AccountFundId, Model.AccountOptions.GetFunds(), "Select Fund", new { @class = "form-control select" })
-                        @Html.ValidationMessageFor(model => model.AccountFundId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label" })
-                        @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
-                    </div>
 
-                </div>
+            @if (Model.Splits.Count() == 1)
+            {
+                Html.RenderPartial("_SingleTransaction",Model,new ViewDataDictionary() { {"onEdit",true } });
+            }
+            else
+            {
+                Html.RenderPartial("_SplitTransaction",Model);
+            }
 
-            </div>
+
         </div>
         <!-- /.box-body -->
     </div>
@@ -101,16 +87,6 @@
     <script src="~/AdminLTE_2_4_2/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
     <!-- Select2 -->
     <script src="~/AdminLTE_2_4_2/bower_components/select2/dist/js/select2.full.min.js"></script>
-    <script type="text/javascript">
+    <script src="~/Scripts/TransactionUpsert.js"></script>
 
-        $(document).ready(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2();
-            //Date picker
-            $('#TransactionDate').datepicker({
-                autoclose: true
-            });
-
-        });
-    </script>
 }

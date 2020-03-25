@@ -7,12 +7,13 @@ using System.Web.Mvc;
 
 namespace ChurchManager.Controllers
 {
-
+    [Authorize]
     public class HomeController : BaseController
     {
         DateTime _yearPrevious = DateTime.Now.AddMonths(-12);
 
         private ApplicationDbContext db = new ApplicationDbContext();
+     
         public ActionResult Index()
         {
             
@@ -23,13 +24,13 @@ namespace ChurchManager.Controllers
                                       join tl in db.TransactionLines on t.Id equals tl.TransactionId
                                       join a in db.AccountCharts on tl.AccountId equals a.Id
                                       where a.Type == AccountChartTypeEnum.Expenses && t.TransactionDate >= _yearPrevious
-                                      select tl.Amount).Sum();
+                                      select (decimal?) tl.Amount).Sum().GetValueOrDefault();
 
             var yearToDateRevenue = (from t in db.Transactions
                                       join tl in db.TransactionLines on t.Id equals tl.TransactionId
                                       join a in db.AccountCharts on tl.AccountId equals a.Id
                                       where a.Type == AccountChartTypeEnum.Income && t.TransactionDate >= _yearPrevious
-                                     select tl.Amount).Sum();
+                                     select (decimal?)tl.Amount).Sum().GetValueOrDefault();
 
            
 

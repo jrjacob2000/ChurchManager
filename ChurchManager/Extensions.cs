@@ -12,25 +12,25 @@ namespace ChurchManager
         public static IEnumerable<SelectListItem> GetAccountRegister(this IEnumerable<AccountChart> accts, string selectedValue = null)
         {
             var result = accts.Where(x => x.ShowInRegister  )
-                 .Select(s => new SelectListItem() { Value = s.Id.ToString(), Text = string.Format("{0} - {1}",s.Type, s.Name), Selected= s.Id.ToString() == selectedValue })
+                 .Select(s => new SelectListItem() { Value = s.Id.ToString(), Text = string.Format("{0} - {1}",s.Type.ToString().Substring(0,3).ToUpper(), s.Name), Selected= s.Id.ToString() == selectedValue })
                  .OrderBy(o => o.Text)
                  .ToList();
             return result;
         }
 
-        public static IEnumerable<SelectListItem> GetAccounts(this IEnumerable<AccountChart> accts)
+        public static IEnumerable<SelectListItem> GetAccounts(this IEnumerable<AccountChart> accts, string selectedValue = null)
         {
             var result = accts.Where(x => x.Type != AccountChartTypeEnum.FundBalance)
-                 .Select(s => new SelectListItem() { Value = s.Id.ToString(), Text = string.Format("{0} - {1}", s.Type, s.Name) })
+                 .Select(s => new SelectListItem() { Value = s.Id.ToString(), Text = string.Format("{0} - {1}", s.Type.ToString().Substring(0, 3).ToUpper(), s.Name), Selected = s.Id.ToString() == selectedValue })
                  .OrderBy(o => o.Text)
                  .ToList();
             return result;
         }
 
-        public static IEnumerable<SelectListItem> GetFunds(this IEnumerable<AccountChart> accts)
+        public static IEnumerable<SelectListItem> GetFunds(this IEnumerable<AccountChart> accts, string selectedValue = null)
         {
             var result = accts.Where(x => x.Type == AccountChartTypeEnum.FundBalance)
-                 .Select(s => new SelectListItem() { Value = s.Id.ToString(), Text = s.Name })
+                 .Select(s => new SelectListItem() { Value = s.Id.ToString(), Text = s.Name, Selected = s.Id.ToString() == selectedValue } )
                  .OrderBy(o => o.Text)
                  .ToList();
             return result;
