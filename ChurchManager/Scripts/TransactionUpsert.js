@@ -11,6 +11,8 @@ $(document).ready(function () {
         autoclose: true
     });
 
+    $('.errorSummary').hide();
+
     var splitIndex = 0;
     $("#btnAddSplit").click(function () {
 
@@ -284,16 +286,24 @@ $('#submit').click(function () {
 
     $.ajax({
         type: 'POST',
-        url: '/transactions/CreateWithSplit',
+        url: '/transactions/TransactionUpsert',
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (data) {
             if (data.status == 200) {
+                $('.errorSummary').hide();
                 var accountRegistryId = $('#AccountRegistryId').val();
                 window.location.href = '/Transactions?accountRegistryId=' + accountRegistryId;
             }
             else {
                 alert('Error status: ' + data.status);
+                $('.errorSummary').show();
+                $('.errorSummary').find('p').remove();
+                $.each(data.errors,
+                    function (a, b) {
+                        $('.errorSummary').append($("<p>").text(b));
+                    });
+                              
             }
         },
         error: function (error) {

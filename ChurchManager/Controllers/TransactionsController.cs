@@ -158,30 +158,30 @@ namespace ChurchManager.Controllers
             }
         }
 
-        // POST: Transactions/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        //// POST: Transactions/Create
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Create(TransactionView transactionView)
+        //{
+        //    if (transactionView == null)
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+        //    if ((transactionView.Payment.HasValue && transactionView.Deposit.HasValue) ||
+        //      (!transactionView.Payment.HasValue && !transactionView.Deposit.HasValue))
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+        //    //if (transactionView.AccountFundId == Guid.Empty)
+        //    //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+        //   var result = Upsert( transactionView);
+
+        //    return View(result);
+        //}
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(TransactionView transactionView)
-        {
-            if (transactionView == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            if ((transactionView.Payment.HasValue && transactionView.Deposit.HasValue) ||
-              (!transactionView.Payment.HasValue && !transactionView.Deposit.HasValue))
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            //if (transactionView.AccountFundId == Guid.Empty)
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-           var result = Upsert( transactionView);
-
-            return View(result);
-        }
-
-        [HttpPost]
-        public JsonResult CreateWithSplit(TransactionView transactionView)
+        public JsonResult TransactionUpsert(TransactionView transactionView)
         {
             if (transactionView == null)
                 return new JsonResult { Data = new { status = 400 } };
@@ -189,11 +189,11 @@ namespace ChurchManager.Controllers
             if ((transactionView.Payment.HasValue && transactionView.Deposit.HasValue) ||
               (!transactionView.Payment.HasValue && !transactionView.Deposit.HasValue))
                 return new JsonResult { Data = new { status = 400 } };
-                       
 
-            var data= Upsert(transactionView);
+            List<string> validationErrors = new List<string>();
+            var data= Upsert(transactionView, out validationErrors);
 
-            return new JsonResult { Data = new { status = data != null ? 200 : 500 } };
+            return new JsonResult { Data = new { status = data != null ? 200 : 500, errors = validationErrors } };
         }
 
         // GET: Transactions/Edit/5
@@ -256,8 +256,8 @@ namespace ChurchManager.Controllers
               (!transactionView.Payment.HasValue && !transactionView.Deposit.HasValue))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-
-            var data =  Upsert( transactionView);
+            List<string> errors = new List<string>();
+            var data =  Upsert( transactionView,out errors);
 
             return RedirectToAction("Index", new { accountRegistryId = data.AccountRegistryId });
         }
@@ -326,7 +326,8 @@ namespace ChurchManager.Controllers
         }
 
         private List<TransactionLine> GetDebitCreditPair(Guid transactionId, Guid creditAccountId, Guid debitAccountId, Guid fundId, decimal amount)
-        {
+        {       
+
             var lines = new List<TransactionLine>() {
                 new TransactionLine(){
                     Id =Guid.NewGuid(),
@@ -347,22 +348,27 @@ namespace ChurchManager.Controllers
             return lines;
         }
 
-        private TransactionView Upsert(TransactionView transactionView)
+        private TransactionView Upsert(TransactionView transactionView,out List<string> errors )
         {
+            errors = new List<string>();
             //TODO:Add validation for payment its there's still a balance in fund or register account.
             var transactionId = transactionView.Id;
             Transaction transaction;
             if (transactionId != null && transactionId != Guid.Empty)
             {
                 transaction = db.Transactions.Include("TransactionLines").Where(x => x.Id == transactionId).FirstOrDefault();
-                if(transaction == null)
+                if (transaction == null)
+                {
                     return null;
+                }
 
                 transaction.DateLastEdited = DateTime.Now;
                 transaction.EditedBy = new Guid(Operator().Id);
             }
             else
             {
+                if (transactionView.Splits.Count() == 0)
+                    errors.Add("At least 1 line is required");
                 transaction = new Transaction();
                 transaction.Id = Guid.NewGuid();
                 transaction.DateEntered = DateTime.Now;
@@ -381,19 +387,53 @@ namespace ChurchManager.Controllers
                 transaction.OwnerGroupId = Operator().OwnerGroupId;
 
                 var lines = new List<TransactionLine>();
-                transactionView.Splits.ForEach(item =>
+                foreach(var item in transactionView.Splits)              
                 {
+                    if (transactionView.Deposit == null && transactionView.Payment == null)
+                        errors.Add("amount cannot be empty");
+
+                    if (item.SplitAccountId == Guid.Empty || transactionView.AccountRegistryId == Guid.Empty || item.SplitAccountFundId == Guid.Empty)
+                        errors.Add("Either Account Registry, Account, or Fund are invalid");
+
                     bool isDeposit = transactionView.Deposit.HasValue;
                     Guid creditId = isDeposit ? item.SplitAccountId : transactionView.AccountRegistryId;
                     Guid debitId = isDeposit ? transactionView.AccountRegistryId : item.SplitAccountId ;
                     decimal amount = item.SplitAmount;
 
-                    var itemLines = GetDebitCreditPair(transaction.Id, creditId, debitId, item.SplitAccountFundId, amount);
-                    lines.AddRange(itemLines);
-                });
+                    var creditAccount = db.AccountCharts.Find(creditId);
+                    var debitAccount = db.AccountCharts.Find(debitId);
+
+                    decimal assetBal = 0;
+                    if (creditAccount.Type == AccountChartTypeEnum.Asset)
+                        assetBal = GetAccountBalance(creditId, item.SplitAccountFundId);
+                    
+                    decimal liabilityBal = 0;
+                    if (debitAccount.Type == AccountChartTypeEnum.Liability)
+                        liabilityBal = GetAccountBalance(debitId, item.SplitAccountFundId);
+
+                    if (debitAccount.Type == AccountChartTypeEnum.Liability)
+                    {
+                        if (liabilityBal < amount)
+                            errors.Add(string.Format("You are over paying to your {0}. You current balance is only {1}.", debitAccount.Name, liabilityBal));                       
+                    }
+
+                    if (creditAccount.Type == AccountChartTypeEnum.Asset )
+                    {
+                        if (assetBal < amount)
+                            errors.Add(string.Format("You only have {0} in your fund in {1}. its not enough for the payment of {2}", assetBal, creditAccount.Name, amount));
+                    }
 
 
-                if (ModelState.IsValid)
+                    if (errors.Count() == 0)
+                    {
+                        var itemLines = GetDebitCreditPair(transaction.Id, creditId, debitId, item.SplitAccountFundId, amount);
+                        lines.AddRange(itemLines);
+                    }
+                    
+                };
+
+
+                if (ModelState.IsValid && errors.Count() == 0)
                 {
 
                     if (transactionId == null || transactionId == Guid.Empty)
@@ -423,6 +463,21 @@ namespace ChurchManager.Controllers
 
         }
 
-       
+        private decimal GetAccountBalance(Guid registryAccountId, Guid fundId)
+        {
+            //Todo: registry account validation: should be assets and liability only
+
+            var query = (from tl in db.TransactionLines
+                         join a in db.AccountCharts on tl.AccountId equals a.Id
+                         join f in db.AccountCharts on tl.FundId equals f.Id
+                         where f.Id == fundId && a.Id == registryAccountId
+                         //group new { tl, a, f } by new { Fund = f.Id, Account = a.Id } into grp
+                         select a.Type == AccountChartTypeEnum.Liability ? tl.Amount * -1 : tl.Amount).ToList();
+
+            return query == null? 0 : query.Sum();
+        }
+
+      
+
     }
 }

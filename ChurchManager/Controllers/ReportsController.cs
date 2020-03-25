@@ -75,7 +75,7 @@ namespace ChurchManager.Controllers
                          {
                              Fund = grp.FirstOrDefault().f.Name,
                              Account = grp.FirstOrDefault().a.Name,
-                             Amount = grp.Sum(s => s.tl.Amount > 0 ? s.tl.Amount : s.tl.Amount * -1)
+                             Amount = grp.Sum(s => s.tl.Amount) > 0  ? grp.Sum(s => s.tl.Amount) : grp.Sum(s => s.tl.Amount) * -1
 
                          }).ToList();
 
